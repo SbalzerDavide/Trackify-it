@@ -8,7 +8,7 @@ import {
   User,
 } from '@supabase/supabase-js'
 import { environment } from '../environments/environment'
-import { CanMatchFn, Router } from '@angular/router'
+import { CanMatchFn, RedirectCommand, Router } from '@angular/router'
 
 export interface Profile {
   id?: string
@@ -74,8 +74,9 @@ export const isLoggedinMatch: CanMatchFn = ()=>{
    const supabaseService = inject(SupabaseService)
    const router = inject(Router)
    if(supabaseService.activeProfile()){
-    // return new RedirectCommand(router.parseUrl('/personal')) 
-    return false
+    console.log("match");
+    
+    return new RedirectCommand(router.parseUrl('/personal')) 
    } else{
     return true
    }

@@ -6,6 +6,7 @@ import { authGuard } from './shared/auth/auth.guard';
 import { LoginComponent } from './pages/login/login.component';
 import { PersonalAreaComponent } from './pages/personal-area/personal-area.component';
 import { AppComponent } from './app.component';
+import { isLoggedinMatch } from './supabase.service';
 
 export const routes: Routes = [
   { path: '',
@@ -15,7 +16,7 @@ export const routes: Routes = [
   { 
     path: 'login', 
     component: LoginComponent,
-    // canMatch: [isLoggedinMatch]
+    canMatch: [isLoggedinMatch]
   },
   { 
     path: 'personal', 
