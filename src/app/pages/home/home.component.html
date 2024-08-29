@@ -1,0 +1,3 @@
+@if (supabaseService.activeProfile()) {
+  <h1>Welcome {{ supabaseService.activeProfile()?.username }}</h1>
+}

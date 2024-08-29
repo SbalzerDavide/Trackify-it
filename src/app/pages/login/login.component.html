@@ -1,0 +1,20 @@
+<form [formGroup]="loginForm" (ngSubmit)="login()" class="form-widget">
+  <div>
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email" />
+  </div>
+  <div>
+    <label for="password">Password</label>
+    <input id="password" type="password" formControlName="password"/>
+  </div>
+
+  <div>
+    <button type="submit" class="button primary block" [disabled]="loading">
+      Login
+    </button>
+  </div>
+
+  <!-- <div>
+    <button class="button block" (click)="signOut()">Sign Out</button>
+  </div> -->
+</form>
