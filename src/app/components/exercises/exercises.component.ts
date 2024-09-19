@@ -1,52 +1,31 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BasicActivityExerciseService } from '../basic-activity-exercise.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 import { ExercisesService } from '../exercises.service';
 import { CardComponent } from "../../shared/lib/card/card.component";
+import { FormExerciseComponent } from './form-exercise/form-exercise.component';
+
 
 @Component({
   selector: 'app-exercises',
   standalone: true,
-  imports: [ReactiveFormsModule, CardComponent],
+  imports: [MatButtonModule, CardComponent],
   templateUrl: './exercises.component.html',
   styleUrl: './exercises.component.css'
 })
 export class ExercisesComponent implements OnInit{
   exerciseService = inject(ExercisesService)
-  basicActivityService = inject(BasicActivityExerciseService)
+
+  readonly dialog = inject(MatDialog);
 
   async ngOnInit() {
     await this.exerciseService.fetchExercises()
-    await this.basicActivityService.fetchBasicActivities()
   }
 
-  basicActivities = computed(()=>{    
-    return this.basicActivityService.loadedBasicActivities().map((el)=>{
-      return {
-        value: el.id,
-        label: el.name
-      }
-    })
-  })
-
-  insertExerciseForm = new FormGroup({
-    basicExercise: new FormControl('', {
-      validators: [Validators.required]
-    }),
-    repetitions: new FormControl('', {
-      validators: [Validators.required, Validators.min(1)]
-    })
-  })
-
-  insertExercise(){
-    if(this.insertExerciseForm.valid){
-      this.exerciseService.addExercises({
-        number_of_repetitions: this.insertExerciseForm.value.repetitions,
-        basic_exercise_id: this.insertExerciseForm.value.basicExercise,        
-      })
-    }
-    
+  openDialog() {
+    this.dialog.open(FormExerciseComponent);
   }
+
 }

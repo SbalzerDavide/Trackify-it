@@ -1,0 +1,22 @@
+.action{
+  display: flex;
+  justify-content: end;
+}
+.cards-container{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+app-card{
+  flex-grow: 1;
+  max-width: calc(50% -10px);
+  min-width: calc(50% -10px);
+}
+
+@media (max-width: 599px) {
+  app-card{
+    max-width: 100%;
+    min-width: 100%;
+  }
+}

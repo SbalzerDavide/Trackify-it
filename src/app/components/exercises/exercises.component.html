@@ -1,25 +1,12 @@
-<ul>
+<div class="cards-container">
   @for (exercise of exerciseService.loadedExercises(); track $index) {
-    <li>{{ exercise.number_of_repetitions }} x {{ exercise.basic_activity_exercise.name }}</li>
+    <app-card       
+    [title]="exercise.number_of_repetitions" 
+    [description]=" exercise.basic_activity_exercise.name"/>  
   }
-</ul>
-<form [formGroup]="insertExerciseForm" (ngSubmit)="insertExercise()">
-  <div>
-    <label for="name">Exercise name</label>
-    <select name="name" id="name" formControlName="basicExercise" >
-      @for (basicActivity of basicActivities(); track $index) {
-        <option [value]="basicActivity.value">{{ basicActivity.label }}</option>
-      }
-    </select>
-  </div>
-  <div>
-    <label for="repetitions">Number of repetitions</label>
-    <input id="repetitions" type="number" formControlName="repetitions" />
-  </div>
-  <div>
-    <button type="submit" class="button primary block">
-      Add
-    </button>
-  </div>
+</div>
 
-</form>
+<div class="action">
+  <button mat-button (click)="openDialog()">Add new</button>
+</div>
+

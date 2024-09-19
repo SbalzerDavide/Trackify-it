@@ -17,6 +17,7 @@ export class ExercisesService {
 
   constructor() { }
 
+  // SELECT
   async fetchExercises(){   
     const { data } = await this.supabaseService.supabase
       .from(EXERCISES)
@@ -31,6 +32,8 @@ export class ExercisesService {
 
   // INSERT
   async addExercises(activity:{}){    
+    console.log(activity);
+    
     const { error } = await this.supabaseService.supabase
       .from(EXERCISES)
       .insert(activity)
