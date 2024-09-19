@@ -71,11 +71,15 @@ export class LoginComponent implements OnInit{
         if(this.authService.session){
           this.loading.set(false)
           this.router.navigate(['personal'])
+        } else{
+          this.loading.set(false)
         }
       } else{
         this.loading.set(false)
       }
     } catch(error){
+      console.log("error");
+      
       console.error(error)
       this.loading.set(false)
     }
