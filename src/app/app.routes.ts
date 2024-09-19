@@ -5,11 +5,14 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authGuard } from './shared/auth/auth.guard';
 import { LoginComponent } from './pages/login/login.component';
 import { PersonalAreaComponent } from './pages/personal-area/personal-area.component';
-import { AppComponent } from './app.component';
-import { isLoggedinMatch } from './supabase.service';
+import { NotFoundComponentComponent } from './pages/not-found-component/not-found-component.component';
+import { isLoggedinMatch } from './shared/auth/auth.service';
+import { BasicExercisesComponent } from './pages/basic-exercises/basic-exercises.component';
+import { ExercisesPageComponent } from './pages/exercises-page/exercises-page.component';
 
 export const routes: Routes = [
-  { path: '',
+  { 
+    path: '',
     redirectTo: 'login',
     pathMatch: 'full',
   },
@@ -35,7 +38,20 @@ export const routes: Routes = [
       {
         path: 'home',
         loadComponent: () => HomeComponent
+      },
+      {
+        path: 'basic-exercises',
+        loadComponent: () => BasicExercisesComponent
+      },
+      {
+        path: 'exercises',
+        loadComponent: () => ExercisesPageComponent
       }
+
     ]
+  },
+  {
+    path: '**',
+    component: NotFoundComponentComponent
   }
 ];
