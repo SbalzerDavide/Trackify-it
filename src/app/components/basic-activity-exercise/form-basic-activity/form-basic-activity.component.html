@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Add new basic exercise</h2>
+<mat-dialog-content class="mat-typography">
+
+  <form class="basic-form" [formGroup]="insertBaseActivityForm">
+    <mat-form-field class="full-width">
+      <mat-label>Exercise name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label>Calories</mat-label>
+      <input type="number" matInput formControlName="cal">
+    </mat-form-field>  
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="submit" (click)="insertActivity()" cdkFocusInitial>Add</button>
+</mat-dialog-actions>
+
+
