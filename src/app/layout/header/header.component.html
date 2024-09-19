@@ -2,7 +2,9 @@
   <button (click)="toggleSideNav.emit()" mat-icon-button aria-label="icon-button with menu icon">
     <mat-icon>menu</mat-icon>
   </button>
-  <span>My App</span>
+  <span>
+    <a [routerLink]="['/personal']">Healt</a>
+    </span>
   <span class="spacer"></span>
   <button mat-icon-button class="favorite-icon" aria-label="icon-button with heart icon">
     <mat-icon>favorite</mat-icon>
