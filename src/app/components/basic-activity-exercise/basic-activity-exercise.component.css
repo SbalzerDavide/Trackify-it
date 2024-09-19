@@ -10,8 +10,6 @@
 
 app-card{
   flex-grow: 1;
-  max-width: calc(50% - 10px);
-  min-width: calc(50% - 10px);
 }
 
 @media (max-width: 599px) {
