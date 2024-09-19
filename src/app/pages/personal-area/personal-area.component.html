@@ -1,8 +1,14 @@
-<app-header />
+<app-header (toggleSideNav)="sidenav.toggle()" />
 
-<div class="container">
-  <router-outlet />
-</div>
+<mat-sidenav-container class="container">
+  <mat-sidenav #sidenav mode="over">
+    <app-menu (toggleSideNav)="sidenav.toggle()"/>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>
 
 <app-footer />
 

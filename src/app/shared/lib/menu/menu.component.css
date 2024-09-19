@@ -1,0 +1,25 @@
+
+ul{
+  margin: 0;
+  padding: 0;
+}
+
+li{
+  box-sizing: border-box;
+  list-style: none;
+  height: var(--mdc-list-list-item-one-line-container-height);
+  line-height: var(--mdc-list-list-item-one-line-container-height);
+  width: 100%;
+  padding: 0 16px;
+}
+
+li:hover{
+  background-color: rgba(32, 26, 27, 0.08);
+}
+
+a{
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+}
