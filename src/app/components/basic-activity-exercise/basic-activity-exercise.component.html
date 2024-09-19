@@ -1,12 +1,10 @@
-<mat-grid-list class="cards-container" cols="2" rowHeight="1:1">
+<div class="cards-container">
   @for (activity of basicExerciseService.loadedBasicActivities(); track $index) {
-    <mat-grid-tile>
-      <app-card       
-      [title]="activity.name" 
-      [description]="activity.description"/>  
-    </mat-grid-tile>
+    <app-card       
+    [title]="activity.name" 
+    [description]="activity.description"/>  
   }
-</mat-grid-list>
+</div>
 <div class="action">
   <button mat-button (click)="openDialog()">Add new</button>
 </div>

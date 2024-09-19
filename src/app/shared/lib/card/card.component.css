@@ -1,6 +1,9 @@
-.example-card {
-  max-width: 400px;
+.card {
   min-height: 150px;
+}
+
+.card:hover{
+  background-color: rgba(186, 0, 92, 0.08);
 }
 
 .example-card-footer {

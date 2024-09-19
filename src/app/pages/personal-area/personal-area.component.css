@@ -16,6 +16,10 @@ mat-sidenav{
   border-radius: 0% ;
 }
 
+mat-sidenav-content{
+  padding: 0 26px;
+}
+
 @media (max-width: 599px) {
   .container {
       top: var(--mat-toolbar-mobile-height);
