@@ -1,3 +1,14 @@
-@if (supabaseService.activeProfile()) {
-  <h1>Welcome {{ supabaseService.activeProfile()?.username }}</h1>
+@if (authService.activeProfile()) {
+  <h1>Welcome {{ authService.activeProfile()?.username }}</h1>
+  <mat-list role="list">
+    <mat-list-item role="listitem">
+      <a [routerLink]="['/personal', 'dashboard']">Dashboard</a>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <a [routerLink]="['/personal', 'basic-exercises']">Basic Exercises</a>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <a [routerLink]="['/personal', 'exercises']">Exercises</a>
+    </mat-list-item>
+  </mat-list>
 }
