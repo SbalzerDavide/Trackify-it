@@ -77,9 +77,7 @@ export class AuthService {
     return this.supabase.auth.signOut()
   }
 
-  async setSessionData(access_token: string, refresh_token: string){
-    console.log('try');
-    
+  async setSessionData(access_token: string, refresh_token: string){    
     try{
       const { data } = await this.supabase.auth.setSession({
         access_token,
@@ -91,8 +89,6 @@ export class AuthService {
         this.profile.set(data)        
       }
     } catch(error){      
-      console.log('errrr');
-      
       console.error(error)
     }
   }

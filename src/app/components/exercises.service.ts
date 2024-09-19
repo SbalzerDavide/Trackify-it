@@ -30,9 +30,7 @@ export class ExercisesService {
   }
 
   // INSERT
-  async addExercises(activity:{}){
-    console.log("add");
-    
+  async addExercises(activity:{}){    
     const { error } = await this.supabaseService.supabase
       .from(EXERCISES)
       .insert(activity)

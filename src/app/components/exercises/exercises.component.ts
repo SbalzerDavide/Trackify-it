@@ -41,7 +41,6 @@ export class ExercisesComponent implements OnInit{
   })
 
   insertExercise(){
-    console.log('insert');
     if(this.insertExerciseForm.valid){
       this.exerciseService.addExercises({
         number_of_repetitions: this.insertExerciseForm.value.repetitions,
