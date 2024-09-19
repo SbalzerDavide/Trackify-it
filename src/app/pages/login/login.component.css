@@ -1,0 +1,30 @@
+:host{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+
+:host form{
+  display: flex;
+  flex-direction: column;
+}
+
+h2{
+  color: #201a1b;
+}
+
+.full-width{
+  width: 300px;
+}
+
+.login-container{
+  padding: 20px 10px;
+}
+
+.login-container .action{
+  display: flex;
+  justify-content: end;
+}
