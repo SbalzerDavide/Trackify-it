@@ -21,7 +21,7 @@ export class ExercisesService {
   async fetchExercises(){   
     const { data } = await this.supabaseService.supabase
       .from(EXERCISES)
-      .select(`number_of_repetitions, 
+      .select(`number_of_repetitions, id, 
         ${BASIC_ACTIVITY_EXERCISE}( name, cal)`)
         .eq('user_id', this.authService.session?.user.id)
       
@@ -31,9 +31,7 @@ export class ExercisesService {
   }
 
   // INSERT
-  async addExercises(activity:{}){    
-    console.log(activity);
-    
+  async addExercises(activity:{}){        
     const { error } = await this.supabaseService.supabase
       .from(EXERCISES)
       .insert(activity)
