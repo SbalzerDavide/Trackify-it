@@ -13,3 +13,27 @@
 mat-card-content{
   flex-grow: 1;
 }
+
+.quantity-selector{
+  width: 100%;
+  justify-content: center;
+  display: flex;
+}
+
+.quantity-selector span{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  font-size: 30px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 120px;
+}
+
+.button-container button{
+  font-size: 30px;
+}

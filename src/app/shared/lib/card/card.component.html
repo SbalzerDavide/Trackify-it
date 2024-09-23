@@ -6,11 +6,23 @@
     <p>{{ description() }}</p>
   </mat-card-content>
   <mat-card-footer class="example-card-footer">
-    <mat-chip-set aria-label="Chihuahua traits">
+    @if(quantity()){
+      <div class="quantity-selector">
+        <div (click)="updateQuantity.emit(0)" class="button-container">
+          <button mat-fab>-</button>
+        </div>
+        <span>{{ quantity() }}</span>
+        <div (click)="updateQuantity.emit(1)" class="button-container">
+          <button mat-fab>+</button>
+        </div>
+      </div>
+    } @else {
+      <mat-chip-set aria-label="Chihuahua traits">
       <!-- here put exercise type/types -->
-      <mat-chip>charming</mat-chip>
-      <mat-chip>graceful</mat-chip>
-      <mat-chip>sassy</mat-chip>
-    </mat-chip-set>
+        <mat-chip>charming</mat-chip>
+        <mat-chip>graceful</mat-chip>
+        <mat-chip>sassy</mat-chip>
+      </mat-chip-set>
+    }
   </mat-card-footer>
 </mat-card>
