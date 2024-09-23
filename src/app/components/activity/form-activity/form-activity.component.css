@@ -1,0 +1,15 @@
+.basic-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.full-width{
+  width: 300px;
+}
+
+.action{
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}

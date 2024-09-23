@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Add exercise</h2>
+<mat-dialog-content class="mat-typography">
+
+  <form class="basic-form" [formGroup]="insertActivityForm">
+
+    <mat-form-field class="full-width">
+      <mat-label>Choose a date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="day">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Exercise</mat-label>
+        <mat-select formControlName="exercise">
+          @for (exercise of exercises(); track $index) {
+            <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
+          }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Quantity</mat-label>
+      <input type="number" matInput formControlName="quantity">
+    </mat-form-field>  
+
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="submit" (click)="insertActivity()" cdkFocusInitial>Add</button>
+</mat-dialog-actions>
+
+

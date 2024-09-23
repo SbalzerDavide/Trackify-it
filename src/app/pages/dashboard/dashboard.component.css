@@ -1,0 +1,22 @@
+.add-activity{
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+
+.cards-container{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+app-card{
+  flex-grow: 1;
+}
+
+@media (max-width: 599px) {
+  app-card{
+    max-width: 100%;
+    min-width: 100%;
+  }
+}

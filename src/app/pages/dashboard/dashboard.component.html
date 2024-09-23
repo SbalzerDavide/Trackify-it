@@ -1,1 +1,17 @@
 <h3>Dashboard</h3>
+<div class="add-activity">
+  <button mat-flat-button (click)="openDialog()">New activity</button>
+</div>
+@if (activityService.loadedActivities().length > 0) {
+  <div class="cards-container">
+    @for (activity of activityService.loadedActivities(); track $index) {
+      <app-card       
+      [title]="activity.exercises.basic_activity_exercise.name" 
+      [quantity]="+activity.quantity"
+      (updateQuantity)="onUpdateQuantity($event, $index)"/>  
+    }
+  </div>
+} @else {
+  <p>No activities here...</p>
+}
+
