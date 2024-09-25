@@ -9,6 +9,7 @@ import { NotFoundComponentComponent } from './pages/not-found-component/not-foun
 import { isLoggedinMatch } from './shared/auth/auth.service';
 import { BasicExercisesComponent } from './pages/basic-exercises/basic-exercises.component';
 import { ExercisesPageComponent } from './pages/exercises-page/exercises-page.component';
+import { ActivityComponent } from './components/activity/activity.component';
 
 export const routes: Routes = [
   { 
@@ -40,13 +41,18 @@ export const routes: Routes = [
         loadComponent: () => HomeComponent
       },
       {
-        path: 'basic-exercises',
+        path: 'basic-exercise',
         loadComponent: () => BasicExercisesComponent
       },
       {
-        path: 'exercises',
+        path: 'exercise',
         loadComponent: () => ExercisesPageComponent
+      },
+      {
+        path: 'activity',
+        loadComponent: () => ActivityComponent
       }
+
 
     ]
   },
