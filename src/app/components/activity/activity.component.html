@@ -15,7 +15,7 @@
 
 <section class="range">
   <button mat-icon-button>
-    <mat-icon>chevron_left</mat-icon>
+    <mat-icon (click)="goBefore()">chevron_left</mat-icon>
   </button>
 
   <div class="unit">
@@ -27,7 +27,7 @@
   </div>
 
   <button mat-icon-button>
-    <mat-icon>chevron_right</mat-icon>
+    <mat-icon (click)="goAfter()">chevron_right</mat-icon>
   </button>
 </section>
 

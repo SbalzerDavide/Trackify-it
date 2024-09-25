@@ -36,8 +36,6 @@ export class ActivityComponent {
         return 'd MMMM'
       case 'year':
        return 'd MMMM y'
-      default:
-        return 'EEEE, MMMM d'
     }
     
   })
@@ -55,8 +53,6 @@ export class ActivityComponent {
   async ngOnInit() {
     this.activityService.fetchActivities()
   }
-
-
 
   onUpdateQuantity(e: number, index: number){
     let newVal = {
@@ -76,6 +72,88 @@ export class ActivityComponent {
   }
 
   changeSel(e: MatButtonToggleChange){
+    this.endRange.set(new Date())
+
     this.rangeType.set(e.value)
+
+    switch (this.rangeType()) {
+      case 'day':        
+        this.startRange.set(new Date())
+        break;
+      case 'week':
+        this.startRange.set(this.changeDay(this.endRange(), -7))
+        break;
+      case 'month':
+        this.startRange.set(this.changeMonth(this.endRange(), -1))
+        break;
+      case 'year':
+        this.startRange.set(this.changeMonth(this.endRange(), -12))
+        break;
+    }
+    this.activityService.fetchRangeActivities(this.startRange(), this.endRange())  
+
+  }
+
+  changeDay(date: Date, daysToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setDate(newDate.getDate() + daysToAdd);
+
+    return newDate;
+  }
+
+  changeMonth(date: Date, monthToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setMonth(newDate.getMonth() + monthToAdd);
+
+    return newDate;
+  }
+
+  goBefore(){
+    switch (this.rangeType()) {
+      case 'day':        
+        this.startRange.set(this.changeDay(this.startRange(), -1))
+        this.endRange.set(this.changeDay(this.endRange(), -1))
+        break;
+      case 'week':
+        this.startRange.set(this.changeDay(this.startRange(), -7))
+        this.endRange.set(this.changeDay(this.startRange(), -7))
+        break;
+      case 'month':
+        this.startRange.set(this.changeMonth(this.startRange(), -1))
+        this.endRange.set(this.changeMonth(this.startRange(), -1))
+        break;
+      case 'year':
+        this.startRange.set(this.changeMonth(this.startRange(), -12))
+        this.endRange.set(this.changeMonth(this.startRange(), -12))
+        break;
+      }
+    this.activityService.fetchRangeActivities(this.startRange(), this.endRange())  
+  }
+
+  goAfter(){
+    switch (this.rangeType()) {
+      case 'day':
+        console.log("day");
+        
+        this.startRange.set(this.changeDay(this.startRange(), 1))
+        this.endRange.set(this.changeDay(this.endRange(), 1))
+        break;
+      case 'week':
+        this.startRange.set(this.changeDay(this.startRange(), 7))
+        this.endRange.set(this.changeDay(this.startRange(), 7))
+        break;
+      case 'month':
+        this.startRange.set(this.changeMonth(this.startRange(), 1))
+        this.endRange.set(this.changeMonth(this.startRange(), 1))
+        break;
+      case 'year':
+        this.startRange.set(this.changeMonth(this.startRange(), 12))
+        this.endRange.set(this.changeMonth(this.startRange(), 12))
+        break;
+    }
+    this.activityService.fetchRangeActivities(this.startRange(), this.endRange())  
+
   }
 }

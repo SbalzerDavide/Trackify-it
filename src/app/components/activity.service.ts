@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 
+
 import { SupabaseService } from '../shared/supabase/supabase.service';
 import { AuthService } from '../shared/auth/auth.service';
 
@@ -33,6 +34,23 @@ export class ActivityService {
       this.userActivities.set(data)
     }
 
+  }
+
+  // SELECT BETWEEN DATE
+  async fetchRangeActivities(startDate: Date, endDate: Date){
+    const { data } = await this.supabaseService.supabase
+    .from(ACTIVITIES)
+    .select(`date, id, quantity, exercise_id,
+      ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
+      .gte('date', this.pgFormatDate(startDate))
+      .lte('date', this.pgFormatDate(endDate))
+      // .gte('date', '2024-08-01')
+      // .lte('date', '2024-08-30')
+      .eq('user_id', this.authService.session?.user.id)
+          
+    if(data){
+      this.userActivities.set(data)
+    }
   }
 
   // INSERT
@@ -112,5 +130,16 @@ export class ActivityService {
     } catch(error){
       console.error(error)
     }
+  }
+
+  pgFormatDate(date:Date) {
+    /* Via http://stackoverflow.com/questions/3605214/javascript-add-leading-zeroes-to-date */
+    function zeroPad(d:number) {
+      return ("0" + d).slice(-2)
+    }
+  
+    var parsed = new Date(date)
+  
+    return [parsed.getUTCFullYear(), zeroPad(parsed.getMonth() + 1), zeroPad(parsed.getDate())].join("-");
   }
 }
