@@ -1,18 +1,30 @@
-// import { signalStore, withState } from '@ngrx/signals';
-// import { Book } from './book.model';
+// import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+// import { Activity } from './activity-model';
+// import { inject } from '@angular/core';
+// import { ActivityService } from './activity.service';
 
-// type BooksState = {
-//   books: Book[];
+// interface ActivityStateModel {
+//   activities: Activity[];
 //   isLoading: boolean;
-//   filter: { query: string; order: 'asc' | 'desc' };
+//   startRange: Date, 
+//   endRange: Date, 
 // };
 
-// const initialState: BooksState = {
-//   books: [],
+// const initialState: ActivityStateModel = {
+//   activities: [],
 //   isLoading: false,
-//   filter: { query: '', order: 'asc' },
+//   startRange: new Date(),
+//   endRange: new Date(),
 // };
 
-// export const BooksStore = signalStore(
-//   withState(initialState)
+// export const ActivityStore = signalStore(
+//   { providedIn: 'root' },
+//   withState(initialState),
+//   withMethods((store, activityService = inject(ActivityService)) =>({
+//     async loadAll(){
+//       patchState(store, {isLoading: true})
+//       await activityService.fetchActivities()
+//       patchState(store, {isLoading: false})
+//     }
+//   }))
 // );
