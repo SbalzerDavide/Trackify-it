@@ -8,13 +8,17 @@
   <mat-card-footer class="example-card-footer">
     @if(quantity()){
       <div class="quantity-selector">
-        <div (click)="updateQuantity.emit(0)" class="button-container">
-          <button mat-fab>-</button>
-        </div>
+        @if (editQuantity()) {
+          <div (click)="updateQuantity.emit(0)" class="button-container">
+            <button mat-fab>-</button>
+          </div>
+        }
         <span>{{ quantity() }}</span>
-        <div (click)="updateQuantity.emit(1)" class="button-container">
-          <button mat-fab>+</button>
-        </div>
+        @if (editQuantity()){
+          <div (click)="updateQuantity.emit(1)" class="button-container">
+            <button mat-fab>+</button>
+          </div>
+        }
       </div>
     } @else {
       <mat-chip-set aria-label="Chihuahua traits">
