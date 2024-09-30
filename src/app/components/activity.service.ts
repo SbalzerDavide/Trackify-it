@@ -16,6 +16,10 @@ export class ActivityService {
   private userActivities = signal<any[]>([])
   loadedActivities = this.userActivities.asReadonly()
 
+  startRange = signal<Date>(new Date())
+  endRange = signal<Date>(new Date())
+
+
 
   supabaseService = inject(SupabaseService)
   authService = inject(AuthService)
@@ -28,10 +32,22 @@ export class ActivityService {
     .from(ACTIVITIES)
     .select(`date, id, quantity, exercise_id,
       ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
+      .gte('date', this.pgFormatDate(this.startRange()))
+      .lte('date', this.pgFormatDate(this.endRange()))
       .eq('user_id', this.authService.session?.user.id)
           
     if(data){
-      this.userActivities.set(data)
+      let groupingList: any[] = []
+      data.forEach(el => {
+        const check = groupingList.findIndex((element) => element.exercise_id === el.exercise_id)
+        
+        if(check >=0){
+          groupingList[check].quantity = groupingList[check].quantity + el.quantity
+        } else{
+          groupingList.push(el)
+        }
+      })
+      this.userActivities.set(groupingList)
     }
 
   }
@@ -44,8 +60,6 @@ export class ActivityService {
       ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
-      // .gte('date', '2024-08-01')
-      // .lte('date', '2024-08-30')
       .eq('user_id', this.authService.session?.user.id)
           
     if(data){
@@ -55,10 +69,9 @@ export class ActivityService {
 
   // INSERT
   async addActivity(activity: any){
-    const mm = activity.date.getMonth() + 1;
-    const dd = activity.date.getDate();
-    const yy = activity.date.getFullYear();
-    const activityDate = yy + '-' + mm.toString().padStart(2, '0') + '-' + dd
+    const activityDate = this.pgFormatDate(activity.date)  
+    console.log(activity.date);
+      
     
     const addedIndex = this.userActivities().findIndex(el => (el.exercise_id === activity.exercise_id && el.date === activityDate))
     if(addedIndex >= 0){
@@ -75,10 +88,7 @@ export class ActivityService {
         .select(`date, id, quantity, exercise_id,
         ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
       if(data){
-        let activities = this.userActivities()
-        activities.push(data[0])
-        
-        this.userActivities.set(activities)
+        this.fetchActivities()
         
       }
       if (error) {

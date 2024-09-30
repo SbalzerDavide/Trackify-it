@@ -1,45 +1,52 @@
-<section class="date-filter">
-  <mat-button-toggle-group
-    name="favoriteColor"
-    aria-label="Favorite Color"
-    hideSingleSelectionIndicator="true"
-    [value]="rangeType()"
-    (change)="changeSel($event)"
-  >
-    <mat-button-toggle value="day">1d</mat-button-toggle>
-    <mat-button-toggle value="week">1w</mat-button-toggle>
-    <mat-button-toggle value="month">1m</mat-button-toggle>
-    <mat-button-toggle value="year">1y</mat-button-toggle>
-  </mat-button-toggle-group>
-</section>
-
-<section class="range">
-  <button mat-icon-button>
-    <mat-icon (click)="goBefore()">chevron_left</mat-icon>
-  </button>
-
-  <div class="unit">
-    <span class="start">{{startRange() | date: dateFormat()}}</span>
-    @if (!isSameDay()) {
-      <span> - </span>
-      <span class="end">{{endRange() | date: dateFormat()}}</span>
+  <section class="date-filter">
+    <mat-button-toggle-group
+      name="favoriteColor"
+      aria-label="Favorite Color"
+      hideSingleSelectionIndicator="true"
+      [value]="rangeType()"
+      (change)="changeSel($event)"
+    >
+      <mat-button-toggle value="day">1d</mat-button-toggle>
+      <mat-button-toggle value="week">1w</mat-button-toggle>
+      <mat-button-toggle value="month">1m</mat-button-toggle>
+      <mat-button-toggle value="year">1y</mat-button-toggle>
+    </mat-button-toggle-group>
+  </section>
+  
+  <section class="range">
+    <button mat-icon-button>
+      <mat-icon (click)="goBefore()">chevron_left</mat-icon>
+    </button>
+  
+    <div class="unit">
+      <span class="start">{{activityService.startRange() | date: dateFormat()}}</span>
+      @if (!isSameDay()) {
+        <span> - </span>
+        <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
+      }
+    </div>
+  
+    <button mat-icon-button>
+      <mat-icon (click)="goAfter()">chevron_right</mat-icon>
+    </button>
+  </section>
+  @if (loading()) {
+    <div class="spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  }@else{
+    @if (activityService.loadedActivities().length > 0) {
+      <div class="cards-container">
+        @for (activity of activityService.loadedActivities(); track $index) {
+          <app-card       
+          [title]="activity.exercises.basic_activity_exercise.name" 
+          [quantity]="+activity.quantity"
+          [editQuantity]="rangeType() === 'day'"
+          (updateQuantity)="onUpdateQuantity($event, $index)"/>  
+        }
+      </div>
+    } @else {
+      <p>No activities here...</p>
     }
-  </div>
-
-  <button mat-icon-button>
-    <mat-icon (click)="goAfter()">chevron_right</mat-icon>
-  </button>
-</section>
-
-@if (activityService.loadedActivities().length > 0) {
-  <div class="cards-container">
-    @for (activity of activityService.loadedActivities(); track $index) {
-      <app-card       
-      [title]="activity.exercises.basic_activity_exercise.name" 
-      [quantity]="+activity.quantity"
-      (updateQuantity)="onUpdateQuantity($event, $index)"/>  
-    }
-  </div>
-} @else {
-  <p>No activities here...</p>
-}
+  }  
+  

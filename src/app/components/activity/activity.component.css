@@ -29,6 +29,12 @@ app-card{
   flex-grow: 1;
 }
 
+.spinner{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 599px) {
   app-card{
     max-width: 100%;
