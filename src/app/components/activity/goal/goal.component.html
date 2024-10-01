@@ -1,0 +1,24 @@
+@if(goalStore.goals().length > 0) {
+  <div class="goal-types">
+    @for (goalType of goalTypes; track $index) {
+      <div class="goal-type">
+        <div class="type">{{ goalType }}</div>
+        <div class="value">
+        @if( getValue(goalType) ){
+          <button (click)="updateGoal(goalType, 0)" mat-mini-fab [disabled]="getValue(goalType)!.quantity < 2">-</button>
+          <span>{{ getValue(goalType)?.quantity }}</span>
+          <button (click)="updateGoal(goalType, 1)" mat-mini-fab>+</button>
+        } @else {
+          <button (click)="addGoal(goalType)" mat-flat-button>ADD</button>
+        }
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    }
+  </div>
+  <div >
+  </div>
+}  
+@else {
+  <p>No goals yet</p>
+}

@@ -10,6 +10,7 @@ import { isLoggedinMatch } from './shared/auth/auth.service';
 import { BasicExercisesComponent } from './pages/basic-exercises/basic-exercises.component';
 import { ExercisesPageComponent } from './pages/exercises-page/exercises-page.component';
 import { ActivityComponent } from './components/activity/activity.component';
+import { GoalPageComponent } from './pages/goal-page/goal-page.component';
 
 export const routes: Routes = [
   { 
@@ -51,6 +52,10 @@ export const routes: Routes = [
       {
         path: 'activity',
         loadComponent: () => ActivityComponent
+      },
+      {
+        path: 'goal',
+        loadComponent: () => GoalPageComponent
       }
 
 
