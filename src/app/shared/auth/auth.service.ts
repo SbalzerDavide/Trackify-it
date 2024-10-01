@@ -34,6 +34,13 @@ export class AuthService {
       .single()
   }
 
+  // async createUser(){
+  //   const { data, error } = await this.supabase.auth.signUp({
+  //     email: 'example@email.com',
+  //     password: 'example-password',
+  //   })
+  // }
+
   async login(email: string, password: string){
     try{
       const { data, error } = await this.supabase.auth.signInWithPassword({
