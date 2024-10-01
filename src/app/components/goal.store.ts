@@ -15,6 +15,7 @@ const initialState: GoalStateModel = {
 };
 
 export const GoalStore = signalStore(
+  { providedIn: 'root' },
   withState(initialState),
   withMethods((store, goalService = inject(GoalService)) =>({
     async loadAll(){
