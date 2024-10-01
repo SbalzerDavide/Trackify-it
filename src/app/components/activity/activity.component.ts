@@ -160,7 +160,15 @@ export class ActivityComponent {
         break;
     }
     this.activityService.fetchActivities()  
+  }
 
-
+  setCardTitle(basicExercise: {
+      number_of_repetitions: string,
+      basic_activity_exercise: {
+        cal: string, 
+        name: string
+      }
+    }){
+      return `${basicExercise.number_of_repetitions} x ${basicExercise.basic_activity_exercise.name}`
   }
 }

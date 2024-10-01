@@ -39,7 +39,7 @@
       <div class="cards-container">
         @for (activity of activityService.loadedActivities(); track $index) {
           <app-card       
-          [title]="activity.exercises.basic_activity_exercise.name" 
+          [title]="setCardTitle(activity.exercises)" 
           [quantity]="+activity.quantity"
           [editQuantity]="rangeType() === 'day'"
           (updateQuantity)="onUpdateQuantity($event, $index)"/>  

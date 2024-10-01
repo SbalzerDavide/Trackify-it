@@ -2,23 +2,25 @@
   <mat-card-header>
     <mat-card-title>{{ title() }}</mat-card-title>
   </mat-card-header>
-  <mat-card-content>
-    <p>{{ description() }}</p>
-  </mat-card-content>
-  <mat-card-footer class="example-card-footer">
-    @if(quantity()){
+  @if (description()) {
+    <mat-card-content>
+      <p>{{ description() }}</p>
+    </mat-card-content>
+  }
+  <mat-card-footer class="card-footer">
+    @if(quantity() && editQuantity()){
       <div class="quantity-selector">
-        @if (editQuantity()) {
-          <div (click)="updateQuantity.emit(0)" class="button-container">
-            <button mat-fab>-</button>
-          </div>
-        }
+        <div (click)="updateQuantity.emit(0)" class="button-container">
+          <button mat-fab>-</button>
+        </div>
         <span>{{ quantity() }}</span>
-        @if (editQuantity()){
-          <div (click)="updateQuantity.emit(1)" class="button-container">
-            <button mat-fab>+</button>
-          </div>
-        }
+        <div (click)="updateQuantity.emit(1)" class="button-container">
+          <button mat-fab>+</button>
+        </div>
+      </div>
+    } @else if (quantity()) {
+      <div class="quantity">
+        <span>{{ quantity() }}</span>
       </div>
     } @else {
       <mat-chip-set aria-label="Chihuahua traits">

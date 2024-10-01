@@ -6,12 +6,22 @@
   background-color: rgba(186, 0, 92, 0.08);
 }
 
-.example-card-footer {
+.card-footer {
   padding: 16px;
 }
 
 mat-card-content{
   flex-grow: 1;
+}
+
+.quantity{
+  display: flex;
+  justify-content: end;
+}
+
+.quantity span{
+  font-size: 50px;
+  padding: 20px;
 }
 
 .quantity-selector{
