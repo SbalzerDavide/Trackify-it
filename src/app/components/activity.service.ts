@@ -69,9 +69,7 @@ export class ActivityService {
 
   // INSERT
   async addActivity(activity: any){
-    const activityDate = this.pgFormatDate(activity.date)  
-    console.log(activity.date);
-      
+    const activityDate = this.pgFormatDate(activity.date)        
     
     const addedIndex = this.userActivities().findIndex(el => (el.exercise_id === activity.exercise_id && el.date === activityDate))
     if(addedIndex >= 0){
