@@ -1,19 +1,16 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { EXERCISES, Exercises } from './exercises.model';
+import { EXERCISES } from './exercises.model';
 import { SupabaseService } from '../shared/supabase/supabase.service';
-import { AuthService } from '../shared/auth/auth.service';
 import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExercisesService {
-  // private userExercises = signal<Exercises[]>([])
   private userExercises = signal<any[]>([])
   loadedExercises = this.userExercises.asReadonly()
 
   supabaseService = inject(SupabaseService)
-  authService = inject(AuthService)
 
   constructor() { }
 
@@ -23,7 +20,6 @@ export class ExercisesService {
       .from(EXERCISES)
       .select(`number_of_repetitions, id, 
         ${BASIC_ACTIVITY_EXERCISE}( name, cal)`)
-        .eq('user_id', this.authService.session?.user.id)
       
     if(data){
       this.userExercises.set(data)

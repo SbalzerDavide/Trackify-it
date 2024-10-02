@@ -1,8 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 
-
 import { SupabaseService } from '../shared/supabase/supabase.service';
-import { AuthService } from '../shared/auth/auth.service';
 
 import { ACTIVITIES } from './activity-model'; 
 import { EXERCISES } from './exercises.model';
@@ -19,10 +17,7 @@ export class ActivityService {
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
 
-
-
   supabaseService = inject(SupabaseService)
-  authService = inject(AuthService)
 
   constructor() { }
 
@@ -34,7 +29,7 @@ export class ActivityService {
       ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
       .gte('date', this.pgFormatDate(this.startRange()))
       .lte('date', this.pgFormatDate(this.endRange()))
-      .eq('user_id', this.authService.session?.user.id)
+      // .eq('user_id', this.authService.session?.user.id)
           
     if(data){
       let groupingList: any[] = []
@@ -60,7 +55,6 @@ export class ActivityService {
       ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
-      .eq('user_id', this.authService.session?.user.id)
           
     if(data){
       this.userActivities.set(data)

@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SupabaseService } from '../shared/supabase/supabase.service';
 import { BASIC_ACTIVITY_EXERCISE, BasicActivity } from './basic-activity.model';
-import { AuthService } from '../shared/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,6 @@ export class BasicActivityExerciseService {
   loadedBasicActivities = this.userBasicActivities.asReadonly();
 
   supabaseService = inject(SupabaseService)
-  authService = inject(AuthService)
 
   constructor() { }
 
@@ -21,7 +19,6 @@ export class BasicActivityExerciseService {
     const { data } = await this.supabaseService.supabase
       .from(BASIC_ACTIVITY_EXERCISE)
       .select(`id, name, description, cal`)
-      .eq('user_id', this.authService.session?.user.id)
     if(data){
       this.userBasicActivities.set(data)
     }
