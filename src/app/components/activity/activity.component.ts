@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivityService } from '../activity.service';
 import { AuthService } from '../../shared/auth/auth.service';
 import { CardComponent } from '../../shared/lib/card/card.component';
+import { GoalStore } from '../goal.store';
+import { GoalService } from '../goal.service';
 // import { ActivityStore } from '../activity.store';
 
 
@@ -20,25 +22,28 @@ import { CardComponent } from '../../shared/lib/card/card.component';
   templateUrl: './activity.component.html',
   styleUrl: './activity.component.css'
 })
-export class ActivityComponent {
+export class ActivityComponent implements OnInit{
   activityService = inject(ActivityService)
   authService = inject(AuthService)
 
+  goalStore = inject(GoalStore)
+  goalService = inject(GoalService)
+
   // store = inject(ActivityStore)
 
-  rangeType = signal<'day' | 'week' | 'month' | 'year'>('day')
+  rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('daily')
 
   loading = signal<boolean>(true)
 
   dateFormat = computed(()=>{
     switch (this.rangeType()) {
-      case 'day':
+      case 'daily':
         return 'EEEE, MMMM d'
-      case 'week':
+      case 'weekly':
         return 'd MMMM'
-      case 'month':
+      case 'monthly':
         return 'd MMMM'
-      case 'year':
+      case 'annual':
        return 'd MMMM y'
     }
     
@@ -56,6 +61,7 @@ export class ActivityComponent {
   
   async ngOnInit() {
     await this.activityService.fetchActivities()
+    await this.goalStore.loadAll()
     this.loading.set(false)      
   }
 
@@ -82,16 +88,16 @@ export class ActivityComponent {
     this.rangeType.set(e.value)
 
     switch (this.rangeType()) {
-      case 'day':        
+      case 'daily':        
         this.activityService.startRange.set(new Date())
         break;
-      case 'week':
+      case 'weekly':
         this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -7))
         break;
-      case 'month':
+      case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -1))
         break;
-      case 'year':
+      case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
         break;
     }
@@ -117,19 +123,19 @@ export class ActivityComponent {
 
   goBefore(){
     switch (this.rangeType()) {
-      case 'day':        
+      case 'daily':        
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -1))
         this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), -1))
         break;
-      case 'week':
+      case 'weekly':
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -7))
         this.activityService.endRange.set(this.changeDay(this.activityService.startRange(), -7))
         break;
-      case 'month':
+      case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -1))
         this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), -1))
         break;
-      case 'year':
+      case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -12))
         this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), -12))
         break;
@@ -140,21 +146,19 @@ export class ActivityComponent {
 
   goAfter(){
     switch (this.rangeType()) {
-      case 'day':
-        console.log("day");
-        
+      case 'daily':        
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 1))
         this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), 1))
         break;
-      case 'week':
+      case 'weekly':
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 7))
         this.activityService.endRange.set(this.changeDay(this.activityService.startRange(), 7))
         break;
-      case 'month':
+      case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 1))
         this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), 1))
         break;
-      case 'year':
+      case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 12))
         this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), 12))
         break;
@@ -171,4 +175,9 @@ export class ActivityComponent {
     }){
       return `${basicExercise.number_of_repetitions} x ${basicExercise.basic_activity_exercise.name}`
   }
+
+  getValue(goalType: string, exerciseId: string){
+    return this.goalStore.goals().find(el => el.range === goalType && el.exercise_id === exerciseId)
+  }
+
 }

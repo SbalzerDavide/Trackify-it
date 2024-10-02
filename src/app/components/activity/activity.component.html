@@ -6,10 +6,10 @@
       [value]="rangeType()"
       (change)="changeSel($event)"
     >
-      <mat-button-toggle value="day">1d</mat-button-toggle>
-      <mat-button-toggle value="week">1w</mat-button-toggle>
-      <mat-button-toggle value="month">1m</mat-button-toggle>
-      <mat-button-toggle value="year">1y</mat-button-toggle>
+      <mat-button-toggle value="daily">1d</mat-button-toggle>
+      <mat-button-toggle value="weekly">1w</mat-button-toggle>
+      <mat-button-toggle value="monthly">1m</mat-button-toggle>
+      <mat-button-toggle value="annual">1y</mat-button-toggle>
     </mat-button-toggle-group>
   </section>
   
@@ -40,8 +40,9 @@
         @for (activity of activityService.loadedActivities(); track $index) {
           <app-card       
           [title]="setCardTitle(activity.exercises)" 
+          [goal]="getValue(rangeType(), activity.exercise_id)"
           [quantity]="+activity.quantity"
-          [editQuantity]="rangeType() === 'day'"
+          [editQuantity]="rangeType() === 'daily'"
           (updateQuantity)="onUpdateQuantity($event, $index)"/>  
         }
       </div>

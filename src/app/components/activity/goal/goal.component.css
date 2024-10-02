@@ -24,3 +24,7 @@
 .mat-mdc-mini-fab{
   font-size: 30px;
 }
+
+mat-expansion-panel{
+  margin-bottom: 10px;
+}

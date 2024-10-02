@@ -9,7 +9,6 @@ import { SupabaseService } from '../shared/supabase/supabase.service';
   providedIn: 'root'
 })
 export class GoalService {
-  private userGoal = signal<Goal[]>([])
 
   supabaseService = inject(SupabaseService)
 
@@ -20,7 +19,7 @@ export class GoalService {
     try{
       const { data } = await this.supabaseService.supabase
         .from(GOAL)
-        .select(`quantity, range, id,
+        .select(`quantity, range, id, exercise_id,
         ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name ))`)
         .returns<Goal[]>()
       
@@ -36,12 +35,13 @@ export class GoalService {
   }
 
   // INSERT
-  async addGoal(range: string){
+  async addGoal(newVal: {range: string, exerciseId: string}){
     try{
       await this.supabaseService.supabase
         .from(GOAL)
         .insert({
-          range: range,
+          range: newVal.range,
+          exercise_id: newVal.exerciseId,
           quantity: 1
         })
     } catch(error){
@@ -65,6 +65,5 @@ export class GoalService {
       console.error(error)
     }
   }
-
 
 }
