@@ -20,11 +20,20 @@ export class CardComponent {
   description = input<string>();
   editQuantity = input<boolean>(false);
   quantity = input<number>()
+  goal = input<any>()
   longText = `The Chihuahua is a Mexican breed of toy dog. It is named for the
   Mexican state of Chihuahua and is among the smallest of all dog breeds. It is
   usually kept as a companion animal or for showing.`;
 
   updateQuantity = output<number>()
+
+  getProgressValue(value: number , goal: number){
+    if(value <= goal){      
+      return (value/goal) * 100
+    } else{
+      return 100
+    }
+  }
 
 
 }

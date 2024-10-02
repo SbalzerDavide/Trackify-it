@@ -1,6 +1,11 @@
 <mat-card class="card" appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ title() }}</mat-card-title>
+    <div class="card-header">
+      <mat-card-title>{{ title() }}</mat-card-title>
+      @if (goal()?.quantity && quantity()) {
+        <mat-progress-bar mode="determinate" [value]="getProgressValue(quantity()!, goal()?.quantity)"></mat-progress-bar>
+      }
+    </div>
   </mat-card-header>
   @if (description()) {
     <mat-card-content>
