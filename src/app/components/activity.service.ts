@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, OnInit, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
 
@@ -12,7 +12,10 @@ import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
 export class ActivityService {
 
   private userActivities = signal<any[]>([])
+  private allActivities = signal<any[]>([])
   loadedActivities = this.userActivities.asReadonly()
+  loadedAllActivities = this.allActivities.asReadonly()
+
 
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
@@ -24,14 +27,16 @@ export class ActivityService {
   // SELECT
   async fetchActivities(){
     const { data } = await this.supabaseService.supabase
-    .from(ACTIVITIES)
-    .select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
-      .gte('date', this.pgFormatDate(this.startRange()))
-      .lte('date', this.pgFormatDate(this.endRange()))
-      // .eq('user_id', this.authService.session?.user.id)
+      .from(ACTIVITIES)
+      .select(`date, id, quantity, exercise_id,
+        ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
+        .gte('date', this.pgFormatDate(this.startRange()))
+        .lte('date', this.pgFormatDate(this.endRange()))
+      .order('date', { ascending: true })
           
     if(data){
+      this.allActivities.set(data)
+        
       let groupingList: any[] = []
       data.forEach(el => {
         const check = groupingList.findIndex((element) => element.exercise_id === el.exercise_id)
@@ -50,11 +55,13 @@ export class ActivityService {
   // SELECT BETWEEN DATE
   async fetchRangeActivities(startDate: Date, endDate: Date){
     const { data } = await this.supabaseService.supabase
-    .from(ACTIVITIES)
-    .select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
-      .gte('date', this.pgFormatDate(startDate))
-      .lte('date', this.pgFormatDate(endDate))
+      .from(ACTIVITIES)
+      .select(`date, id, quantity, exercise_id,
+        ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
+        .gte('date', this.pgFormatDate(startDate))
+        .lte('date', this.pgFormatDate(endDate))
+      .order('date', { ascending: true })
+
           
     if(data){
       this.userActivities.set(data)
@@ -63,7 +70,8 @@ export class ActivityService {
 
   // INSERT
   async addActivity(activity: any){
-    const activityDate = this.pgFormatDate(activity.date)        
+    const activityDate = this.pgFormatDate(activity.date) 
+    activity.date = activityDate           
     
     const addedIndex = this.userActivities().findIndex(el => (el.exercise_id === activity.exercise_id && el.date === activityDate))
     if(addedIndex >= 0){
@@ -73,7 +81,7 @@ export class ActivityService {
       this.updateActivity({
         quantity: +oldQuantity + +activity.quantity
       }, this.userActivities()[addedIndex].id)
-    } else{
+    } else{      
       const { data, error } = await this.supabaseService.supabase
         .from(ACTIVITIES)
         .insert(activity)
