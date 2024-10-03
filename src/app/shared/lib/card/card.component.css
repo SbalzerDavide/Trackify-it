@@ -1,5 +1,5 @@
 .card {
-  min-height: 150px;
+  /* min-height: 120px; */
 }
 
 .card:hover{
@@ -12,6 +12,7 @@
 }
 
 .card-footer {
+  position: relative;
   padding: 16px;
 }
 
@@ -20,6 +21,9 @@ mat-card-content{
 }
 
 .quantity{
+  position: absolute;
+  bottom: 0;
+  right: 0;
   display: flex;
   justify-content: end;
 }
