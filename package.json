@@ -22,6 +22,8 @@
     "@angular/router": "^18.2.2",
     "@ngrx/signals": "^18.0.2",
     "@supabase/supabase-js": "^2.45.2",
+    "echarts": "^5.5.1",
+    "ngx-echarts": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
