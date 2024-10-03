@@ -34,14 +34,16 @@ export class AuthService {
       .single()
   }
 
-  // async createUser(){
-  //   const { data, error } = await this.supabase.auth.signUp({
-  //     email: 'example@email.com',
-  //     password: 'example-password',
-  //   })
-  // }
+  async createUser(){
+    const { data, error } = await this.supabase.auth.signUp({
+      email: 'sbalzerdavide@hotmail.it',
+      password: 'ciaoneciaone',
+    })
+  }
 
   async login(email: string, password: string){
+    console.log("login");
+    
     try{
       const { data, error } = await this.supabase.auth.signInWithPassword({
         email: email,
