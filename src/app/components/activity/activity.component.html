@@ -1,53 +1,73 @@
-  <section class="date-filter">
-    <mat-button-toggle-group
-      name="favoriteColor"
-      aria-label="Favorite Color"
-      hideSingleSelectionIndicator="true"
-      [value]="rangeType()"
-      (change)="changeSel($event)"
-    >
-      <mat-button-toggle value="daily">1d</mat-button-toggle>
-      <mat-button-toggle value="weekly">1w</mat-button-toggle>
-      <mat-button-toggle value="monthly">1m</mat-button-toggle>
-      <mat-button-toggle value="annual">1y</mat-button-toggle>
-    </mat-button-toggle-group>
-  </section>
-  
-  <section class="range">
-    <button mat-icon-button>
-      <mat-icon (click)="goBefore()">chevron_left</mat-icon>
-    </button>
-  
-    <div class="unit">
-      <span class="start">{{activityService.startRange() | date: dateFormat()}}</span>
-      @if (!isSameDay()) {
-        <span> - </span>
-        <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
+<section class="date-filter">
+  <mat-button-toggle-group
+    name="favoriteColor"
+    aria-label="Favorite Color"
+    hideSingleSelectionIndicator="true"
+    [value]="rangeType()"
+    (change)="changeSel($event)"
+  >
+    <mat-button-toggle value="daily">1d</mat-button-toggle>
+    <mat-button-toggle value="weekly">1w</mat-button-toggle>
+    <mat-button-toggle value="monthly">1m</mat-button-toggle>
+    <mat-button-toggle value="annual">1y</mat-button-toggle>
+  </mat-button-toggle-group>
+</section>
+
+<section class="range">
+  <button mat-icon-button>
+    <mat-icon (click)="goBefore()">chevron_left</mat-icon>
+  </button>
+
+  <div class="unit">
+    <span class="start">{{activityService.startRange() | date: dateFormat()}}</span>
+    @if (!isSameDay()) {
+      <span> - </span>
+      <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
+    }
+  </div>
+
+  <button mat-icon-button>
+    <mat-icon (click)="goAfter()">chevron_right</mat-icon>
+  </button>
+</section>
+@if (loading()) {
+  <div class="spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+}@else{
+  @if (activityService.loadedActivities().length > 0) {
+    <div class="cards-container">
+      @for (activity of activityService.loadedActivities(); track $index) {
+        <app-card       
+        [title]="setCardTitle(activity.exercises)" 
+        [goal]="getValue(rangeType(), activity.exercise_id)"
+        [quantity]="+activity.quantity"
+        [editQuantity]="rangeType() === 'daily'"
+        (updateQuantity)="onUpdateQuantity($event, $index)"/>  
       }
     </div>
-  
-    <button mat-icon-button>
-      <mat-icon (click)="goAfter()">chevron_right</mat-icon>
-    </button>
-  </section>
-  @if (loading()) {
-    <div class="spinner">
-      <mat-spinner></mat-spinner>
-    </div>
-  }@else{
-    @if (activityService.loadedActivities().length > 0) {
-      <div class="cards-container">
-        @for (activity of activityService.loadedActivities(); track $index) {
-          <app-card       
-          [title]="setCardTitle(activity.exercises)" 
-          [goal]="getValue(rangeType(), activity.exercise_id)"
-          [quantity]="+activity.quantity"
-          [editQuantity]="rangeType() === 'daily'"
-          (updateQuantity)="onUpdateQuantity($event, $index)"/>  
-        }
-      </div>
-    } @else {
-      <p>No activities here...</p>
-    }
-  }  
-  
+  } @else {
+    <p>No activities here...</p>
+  }
+}  
+@if (rangeType() !== 'daily') {
+  <div class="activity-chart">
+    <form [formGroup]="activeExerciseForm">
+      <mat-form-field class="full-width">
+        <mat-label>Exercise</mat-label>
+          <mat-select (selectionChange)="changeActiveExercise()" formControlName="activeExercise">
+            @for (exercise of exercises(); track $index) {
+              <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
+            }
+          </mat-select>
+      </mat-form-field>
+    </form>
+
+    <app-chart 
+      [xData]="formatDataChart.formattedData()?.xData" 
+      [data]="formatDataChart.formattedData()?.data"
+      [goal]="activeGoal()?.quantity"
+      />
+  </div>
+}
+

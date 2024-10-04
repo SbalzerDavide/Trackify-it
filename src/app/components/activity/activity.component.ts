@@ -1,10 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 
 import { ActivityService } from '../activity.service';
@@ -12,13 +15,16 @@ import { AuthService } from '../../shared/auth/auth.service';
 import { CardComponent } from '../../shared/lib/card/card.component';
 import { GoalStore } from '../goal.store';
 import { GoalService } from '../goal.service';
-// import { ActivityStore } from '../activity.store';
+import { ChartComponent } from "../../shared/lib/chart/chart.component";
+import { toObservable } from '@angular/core/rxjs-interop';
+import { FormatDataChartService } from '../format.data.chart.service';
+import { ExercisesService } from '../exercises.service';
 
 
 @Component({
   selector: 'app-activity',
   standalone: true,
-  imports: [MatButtonModule, CardComponent, MatButtonToggleModule, MatIconModule, DatePipe, MatProgressSpinnerModule],
+  imports: [MatButtonModule, CardComponent, MatButtonToggleModule, MatIconModule, DatePipe, MatProgressSpinnerModule, ChartComponent, MatFormFieldModule, MatSelectModule, ReactiveFormsModule],
   templateUrl: './activity.component.html',
   styleUrl: './activity.component.css'
 })
@@ -29,9 +35,23 @@ export class ActivityComponent implements OnInit{
   goalStore = inject(GoalStore)
   goalService = inject(GoalService)
 
-  // store = inject(ActivityStore)
+  formatDataChart = inject(FormatDataChartService)
+
+  exerciseService = inject(ExercisesService)
+
+  activeGoal = signal<any>({})
+
+  activeExerciseForm = new FormGroup({
+    activeExercise: new FormControl('', {
+      validators: [ Validators.required]
+    }),
+  })
+
+
+  selectedExercise: string = ''
 
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('daily')
+  rangeType$ = toObservable(this.rangeType)
 
   loading = signal<boolean>(true)
 
@@ -59,10 +79,34 @@ export class ActivityComponent implements OnInit{
     }
   })
   
+  exercises = computed(()=>{    
+    return this.exerciseService.loadedExercises().map((el)=>{
+      return {
+        value: el.id,
+        label: el.basic_activity_exercise.name
+      }
+    })
+  })
+
+  rangeGoalForChart = computed(()=>{
+    switch(this.rangeType()){
+      case 'daily':
+        return 'daily'
+      case 'weekly':
+        return 'daily'
+      case 'monthly':
+        return 'daily'
+      case 'annual':
+        return 'monthly'
+    }
+
+  })
+
   async ngOnInit() {
     await this.activityService.fetchActivities()
+    await this.exerciseService.fetchExercises()
     await this.goalStore.loadAll()
-    this.loading.set(false)      
+    this.loading.set(false)    
   }
 
   onUpdateQuantity(e: number, index: number){
@@ -82,7 +126,7 @@ export class ActivityComponent implements OnInit{
     }    
   }
 
-  changeSel(e: MatButtonToggleChange){
+  async changeSel(e: MatButtonToggleChange){
     this.activityService.endRange.set(new Date())
 
     this.rangeType.set(e.value)
@@ -92,7 +136,7 @@ export class ActivityComponent implements OnInit{
         this.activityService.startRange.set(new Date())
         break;
       case 'weekly':
-        this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -7))
+        this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
         break;
       case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -1))
@@ -101,8 +145,15 @@ export class ActivityComponent implements OnInit{
         this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
         break;
     }
-    this.activityService.fetchActivities()  
+    await this.activityService.fetchActivities()  
 
+    const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
+      .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
+  
+    this.activeGoal.set(activeGoal)
+
+    
+    this.formatDataForChart()
   }
 
   changeDay(date: Date, daysToAdd: number) {
@@ -121,7 +172,7 @@ export class ActivityComponent implements OnInit{
     return newDate;
   }
 
-  goBefore(){
+  async goBefore(){
     switch (this.rangeType()) {
       case 'daily':        
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -1))
@@ -129,22 +180,23 @@ export class ActivityComponent implements OnInit{
         break;
       case 'weekly':
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -7))
-        this.activityService.endRange.set(this.changeDay(this.activityService.startRange(), -7))
+        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), -7))
         break;
       case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -1))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), -1))
+        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -1))
         break;
       case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -12))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), -12))
+        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -12))
         break;
       }
-    this.activityService.fetchActivities()  
+    await this.activityService.fetchActivities()
 
+    this.formatDataForChart()
   }
 
-  goAfter(){
+  async goAfter(){
     switch (this.rangeType()) {
       case 'daily':        
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 1))
@@ -152,18 +204,20 @@ export class ActivityComponent implements OnInit{
         break;
       case 'weekly':
         this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 7))
-        this.activityService.endRange.set(this.changeDay(this.activityService.startRange(), 7))
+        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), 7))
         break;
       case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 1))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), 1))
+        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 1))
         break;
       case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 12))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.startRange(), 12))
+        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 12))
         break;
     }
-    this.activityService.fetchActivities()  
+    await this.activityService.fetchActivities() 
+
+    this.formatDataForChart()
   }
 
   setCardTitle(basicExercise: {
@@ -180,4 +234,22 @@ export class ActivityComponent implements OnInit{
     return this.goalStore.goals().find(el => el.range === goalType && el.exercise_id === exerciseId)
   }
 
+  changeActiveExercise(){
+    const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
+      .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
+
+    this.activeGoal.set(activeGoal)
+    this.formatDataForChart()
+  }
+
+  formatDataForChart(){        
+    this.formatDataChart.formatData(
+      this.activityService.loadedAllActivities(), 
+      this.rangeType(),
+      this.activityService.startRange(),
+      this.activityService.endRange(),
+      this.activeExerciseForm.value.activeExercise!,
+      this.activeGoal()?.quantity
+    )
+  }
 }

@@ -35,6 +35,10 @@ app-card{
   justify-content: center;
 }
 
+.activity-chart{
+  margin: 10px 0;
+}
+
 @media (max-width: 599px) {
   app-card{
     max-width: 100%;
