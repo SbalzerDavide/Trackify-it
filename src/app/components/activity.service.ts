@@ -34,7 +34,7 @@ export class ActivityService {
         .lte('date', this.pgFormatDate(this.endRange()))
       .order('date', { ascending: true })
           
-    if(data){
+    if(data){      
       this.allActivities.set(data)
         
       let groupingList: any[] = []
@@ -44,7 +44,7 @@ export class ActivityService {
         if(check >=0){
           groupingList[check].quantity = groupingList[check].quantity + el.quantity
         } else{
-          groupingList.push(el)
+          groupingList.push({...el})
         }
       })
       this.userActivities.set(groupingList)
