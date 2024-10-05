@@ -62,8 +62,8 @@ export class LoginComponent implements OnInit{
 
   async ngOnInit(): Promise<void> {
     try{
-      const access_token = window.sessionStorage.getItem('access_token')
-      const refresh_token = window.sessionStorage.getItem('refresh_token')
+      const access_token = window.localStorage.getItem('access_token')
+      const refresh_token = window.localStorage.getItem('refresh_token')
       if(access_token && refresh_token){    
         this.loading.set(true)
         await this.authService.setSessionData(access_token, refresh_token)

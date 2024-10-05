@@ -50,8 +50,8 @@ export class AuthService {
       
       this.session = data.session
       if(this.session?.access_token && this.session.refresh_token){
-        window.sessionStorage.setItem('access_token', this.session?.access_token!)
-        window.sessionStorage.setItem('refresh_token', this.session?.refresh_token!)
+        window.localStorage.setItem('access_token', this.session?.access_token!)
+        window.localStorage.setItem('refresh_token', this.session?.refresh_token!)
 
         const{ data } = await this.getProfile(this.session.user!)
         this.profile.set(data)        
@@ -106,8 +106,8 @@ export const isLoggedinMatch: CanMatchFn = ()=>{
   const authService = inject(AuthService)
   const router = inject(Router)
 
-  const access_token = window.sessionStorage.getItem('access_token')
-  const refresh_token = window.sessionStorage.getItem('refresh_token')
+  const access_token = window.localStorage.getItem('access_token')
+  const refresh_token = window.localStorage.getItem('refresh_token')
   if(access_token && refresh_token){    
     authService.setSessionData(access_token, refresh_token)
   }
