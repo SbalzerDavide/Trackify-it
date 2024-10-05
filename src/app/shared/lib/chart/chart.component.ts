@@ -64,16 +64,8 @@ export class ChartComponent implements OnInit{
       }
     })
     const subscriptionData = this.data$.subscribe({
-      next: (value) => {
-        let max: number | 'maxdata'
-        if(value && value.length > 0 && !this.goal()){
-          max = Math.max(...value!)
-        } else if(value && value.length > 0 && this.goal()){
-          max = Math.max(...value!) > this.goal()! ? Math.max(...value!) : this.goal()!
-        } else {
-          max = 'maxdata'
-        }
-        
+      next: (value) => {        
+        const max = this.getMaxValue(value, this.goal())
         
         if(this.echartsInstance){
           let markLine: {}
@@ -97,6 +89,7 @@ export class ChartComponent implements OnInit{
             }
           }
           
+          
           this.echartsInstance.setOption({
             yAxis: {
               max: max
@@ -106,9 +99,6 @@ export class ChartComponent implements OnInit{
                 data: value,
                 type: 'bar',
                 markLine: markLine,
-                itemStyle: (value: any)=>{
-                  return '#000'
-                }
               },
             ]
           })
@@ -122,6 +112,32 @@ export class ChartComponent implements OnInit{
       subscriptionData.unsubscribe()
     })
     
+  }
+
+  getMaxValue(values: any[] | undefined, goal: number | undefined){
+    const valueClean = values?.map(el=>{
+      if(el.value){
+        return el.value
+      } else{
+        return el
+      }
+    })
+    let maxValue: number = 1
+    if(valueClean){
+      maxValue = Math.max(...valueClean!)
+    }
+
+
+    if(!goal){
+      return maxValue
+    } else {
+      if(maxValue > goal){
+        return maxValue
+      } else{
+        return goal
+      }
+    }                
+
   }
 
   onChartInit(ec: any){

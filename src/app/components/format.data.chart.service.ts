@@ -168,13 +168,13 @@ export class FormatDataChartService {
       const seriesData = orderedData.map(el =>{
         if(activeGoal && el.quantity >= activeGoal){          
           return {
-            value: el.quantity,
+            value: +el.quantity,
             itemStyle: {
               color: '#7FB685'
             }
           }
         } else{
-          return el.quantity.toString()
+          return el.quantity
         }
       })      
       
