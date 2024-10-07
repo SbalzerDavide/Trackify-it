@@ -16,9 +16,10 @@ import { CardComponent } from '../../shared/lib/card/card.component';
 import { GoalStore } from '../goal.store';
 import { GoalService } from '../goal.service';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
-import { toObservable } from '@angular/core/rxjs-interop';
 import { FormatDataChartService } from '../format.data.chart.service';
 import { ExercisesService } from '../exercises.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogDatepickerComponent } from './dialog-datepicker/dialog-datepicker.component';
 
 
 @Component({
@@ -29,6 +30,8 @@ import { ExercisesService } from '../exercises.service';
   styleUrl: './activity.component.css'
 })
 export class ActivityComponent implements OnInit{
+  readonly dialog = inject(MatDialog);
+
   activityService = inject(ActivityService)
   authService = inject(AuthService)
 
@@ -51,7 +54,6 @@ export class ActivityComponent implements OnInit{
   selectedExercise: string = ''
 
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('daily')
-  rangeType$ = toObservable(this.rangeType)
 
   loading = signal<boolean>(true)
 
@@ -145,7 +147,6 @@ export class ActivityComponent implements OnInit{
         this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
         break;
     }
-    await this.activityService.fetchActivities()  
 
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
       .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
@@ -191,7 +192,6 @@ export class ActivityComponent implements OnInit{
         this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -12))
         break;
       }
-    await this.activityService.fetchActivities()
 
     this.formatDataForChart()
   }
@@ -215,7 +215,6 @@ export class ActivityComponent implements OnInit{
         this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 12))
         break;
     }
-    await this.activityService.fetchActivities() 
 
     this.formatDataForChart()
   }
@@ -251,5 +250,18 @@ export class ActivityComponent implements OnInit{
       this.activeExerciseForm.value.activeExercise!,
       this.activeGoal()?.quantity
     )
+  }
+
+  openCalendar(){
+    if(this.rangeType() === 'daily'){
+      const dialogRef = this.dialog.open(DialogDatepickerComponent);
+  
+      dialogRef.afterClosed().subscribe(result => {        
+        if (result !== undefined) {
+          this.activityService.startRange.set(new Date(result))
+          this.activityService.endRange.set(new Date(result))
+        }
+      });
+    }
   }
 }

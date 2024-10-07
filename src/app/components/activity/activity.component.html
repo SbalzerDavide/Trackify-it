@@ -14,20 +14,20 @@
 </section>
 
 <section class="range">
-  <button mat-icon-button>
-    <mat-icon (click)="goBefore()">chevron_left</mat-icon>
+  <button (click)="goBefore()" mat-icon-button>
+    <mat-icon>chevron_left</mat-icon>
   </button>
 
   <div class="unit">
-    <span class="start">{{activityService.startRange() | date: dateFormat()}}</span>
+    <span (click)="openCalendar()" class="start">{{activityService.startRange() | date: dateFormat()}}</span>
     @if (!isSameDay()) {
       <span> - </span>
       <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
     }
   </div>
 
-  <button mat-icon-button>
-    <mat-icon (click)="goAfter()">chevron_right</mat-icon>
+  <button (click)="goAfter()" mat-icon-button>
+    <mat-icon>chevron_right</mat-icon>
   </button>
 </section>
 @if (loading()) {
