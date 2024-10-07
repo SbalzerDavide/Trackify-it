@@ -17,6 +17,9 @@
 }
 
 .goal-type .value span{
+  width: 30px;
+  display: flex;
+  justify-content: center;
   margin: 0 15px;
   font-size: 20px;
 }
