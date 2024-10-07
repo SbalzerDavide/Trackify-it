@@ -1,4 +1,4 @@
-import { inject, Injectable, OnInit, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
 
@@ -20,9 +20,20 @@ export class ActivityService {
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
 
+  public readonly rangeEffect = (callback: () => void) =>
+    effect(() => {
+      this.startRange()   
+      this.endRange()
+      callback();
+    });
+    
   supabaseService = inject(SupabaseService)
-
-  constructor() { }
+    
+  constructor() {
+    this.rangeEffect(() => {
+      this.fetchActivities()
+    });
+  }
 
   // SELECT
   async fetchActivities(){
@@ -89,7 +100,6 @@ export class ActivityService {
         ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
       if(data){
         this.fetchActivities()
-        
       }
       if (error) {
         console.error(error.message);
