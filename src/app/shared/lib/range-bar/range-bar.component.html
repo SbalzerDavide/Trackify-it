@@ -1,0 +1,33 @@
+<section class="date-filter">
+  <mat-button-toggle-group
+    name="favoriteColor"
+    aria-label="Favorite Color"
+    hideSingleSelectionIndicator="true"
+    [value]="rangeType()"
+    (change)="changeSel($event)"
+  >
+    <mat-button-toggle value="daily">1d</mat-button-toggle>
+    <mat-button-toggle value="weekly">1w</mat-button-toggle>
+    <mat-button-toggle value="monthly">1m</mat-button-toggle>
+    <mat-button-toggle value="annual">1y</mat-button-toggle>
+  </mat-button-toggle-group>
+</section>
+
+<section class="range">
+  <button (click)="goBefore()" mat-icon-button>
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+
+  <div class="unit">
+    <span (click)="openCalendar()" class="start">{{activityService.startRange() | date: dateFormat()}}</span>
+    @if (!isSameDay()) {
+      <span> - </span>
+      <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
+    }
+  </div>
+
+  <button (click)="goAfter()" mat-icon-button>
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</section>
+

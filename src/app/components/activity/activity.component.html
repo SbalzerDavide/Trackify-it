@@ -1,35 +1,7 @@
-<section class="date-filter">
-  <mat-button-toggle-group
-    name="favoriteColor"
-    aria-label="Favorite Color"
-    hideSingleSelectionIndicator="true"
-    [value]="rangeType()"
-    (change)="changeSel($event)"
-  >
-    <mat-button-toggle value="daily">1d</mat-button-toggle>
-    <mat-button-toggle value="weekly">1w</mat-button-toggle>
-    <mat-button-toggle value="monthly">1m</mat-button-toggle>
-    <mat-button-toggle value="annual">1y</mat-button-toggle>
-  </mat-button-toggle-group>
-</section>
+<app-range-bar 
+  (changeRange)="onChangeRange($event)" 
+  [rangeType]="rangeType()"/>
 
-<section class="range">
-  <button (click)="goBefore()" mat-icon-button>
-    <mat-icon>chevron_left</mat-icon>
-  </button>
-
-  <div class="unit">
-    <span (click)="openCalendar()" class="start">{{activityService.startRange() | date: dateFormat()}}</span>
-    @if (!isSameDay()) {
-      <span> - </span>
-      <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
-    }
-  </div>
-
-  <button (click)="goAfter()" mat-icon-button>
-    <mat-icon>chevron_right</mat-icon>
-  </button>
-</section>
 @if (loading()) {
   <div class="spinner">
     <mat-spinner></mat-spinner>
@@ -55,7 +27,7 @@
     <form [formGroup]="activeExerciseForm">
       <mat-form-field class="full-width">
         <mat-label>Exercise</mat-label>
-          <mat-select (selectionChange)="changeActiveExercise()" formControlName="activeExercise">
+          <mat-select formControlName="activeExercise">
             @for (exercise of exercises(); track $index) {
               <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
             }
@@ -64,8 +36,8 @@
     </form>
 
     <app-chart 
-      [xData]="formatDataChart.formattedData()?.xData" 
-      [data]="formatDataChart.formattedData()?.data"
+      [xData]="dataChart()?.xData" 
+      [data]="dataChart()?.data"
       [goal]="activeGoal()?.quantity"
       />
   </div>

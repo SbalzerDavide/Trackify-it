@@ -1,0 +1,20 @@
+mat-button-toggle-group{
+  width: 100%;
+  display: flex;
+}
+
+mat-button-toggle{
+  flex-grow: 1;
+}
+
+.range{
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+}
+
+.range .unit{
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}

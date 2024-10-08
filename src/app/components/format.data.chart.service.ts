@@ -1,7 +1,5 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivityService } from './activity.service';
-
-import { ChartFormattedData } from './chart.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +7,6 @@ import { ChartFormattedData } from './chart.model';
 export class FormatDataChartService {
 
   activityService = inject(ActivityService)
-
-  formattedData = signal<ChartFormattedData | null>(null)
 
   constructor() { }
 
@@ -176,14 +172,11 @@ export class FormatDataChartService {
         } else{
           return el.quantity
         }
-      })      
+      })   
       
-      this.formattedData.set({
+      return {
         xData: orderedDate,
         data: seriesData,      
-      })
-      
-
+      }      
   }
-
 }

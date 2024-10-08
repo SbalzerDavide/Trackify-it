@@ -1,4 +1,4 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
 
@@ -19,21 +19,10 @@ export class ActivityService {
 
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
-
-  public readonly rangeEffect = (callback: () => void) =>
-    effect(() => {
-      this.startRange()   
-      this.endRange()
-      callback();
-    });
     
   supabaseService = inject(SupabaseService)
     
-  constructor() {
-    this.rangeEffect(() => {
-      this.fetchActivities()
-    });
-  }
+  constructor() {}
 
   // SELECT
   async fetchActivities(){
@@ -45,7 +34,7 @@ export class ActivityService {
         .lte('date', this.pgFormatDate(this.endRange()))
       .order('date', { ascending: true })
           
-    if(data){      
+    if(data){            
       this.allActivities.set(data)
         
       let groupingList: any[] = []

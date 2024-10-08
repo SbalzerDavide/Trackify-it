@@ -1,4 +1,4 @@
-mat-button-toggle-group{
+/* mat-button-toggle-group{
   width: 100%;
   display: flex;
 }
@@ -17,7 +17,7 @@ mat-button-toggle{
   display: flex;
   justify-content: center;
   flex-grow: 1;
-}
+} */
 
 .cards-container{
   display: flex;
