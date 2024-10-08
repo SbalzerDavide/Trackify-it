@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
@@ -18,7 +18,6 @@ export class ChartComponent implements OnInit{
 
   private destroyRef = inject(DestroyRef)
 
-
   type = input<'line' | 'bar'>('bar')
   xType = input<'value' | 'category' | 'time' | 'log'>('category')
   yType = input<'value' | 'category' | 'time' | 'log'>('value')
@@ -28,7 +27,6 @@ export class ChartComponent implements OnInit{
 
   xData$ = toObservable(this.xData)
   data$ = toObservable(this.data)
-  
 
   chartOption = computed<EChartsOption>(()=> {
     return {
