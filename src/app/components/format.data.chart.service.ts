@@ -55,7 +55,7 @@ export class FormatDataChartService {
     return orderedDate;
   }
 
-  getDailyOrderedData(data: any[], orderedDate: string[], startDate: Date, endDate: Date){
+  private getDailyOrderedData(data: any[], orderedDate: string[], startDate: Date, endDate: Date){
     let activeDate: any;
     let orderedData: {date: string, quantity: number}[] = []
     orderedDate.forEach((date, index, array) => {
@@ -83,7 +83,7 @@ export class FormatDataChartService {
     return orderedData
   }
 
-  getMonthlyOrderedData(data: any[], orderedDate: string[], startDate: Date, endDate: Date){
+  private getMonthlyOrderedData(data: any[], orderedDate: string[], startDate: Date, endDate: Date){
     let orderedData: {date: string, quantity: number}[] = []
     
     let activeMonth: {
@@ -143,22 +143,20 @@ export class FormatDataChartService {
     rangeType: 'daily' | 'weekly' | 'monthly' | 'annual',
     startDate: Date,
     endDate: Date,
-    exerciseId: string,
     activeGoal: number | undefined
   ){      
       const orderedDate = this.getOrderedDates(rangeType, startDate, endDate)
-      const filteredFromExercise = data.filter(el => el.exercise_id === exerciseId)
       let orderedData: {date: string, quantity: number}[] = []
 
       switch(rangeType){
         case 'weekly':
-          orderedData = this.getDailyOrderedData(filteredFromExercise, orderedDate, startDate, endDate)
+          orderedData = this.getDailyOrderedData(data, orderedDate, startDate, endDate)
           break;
         case 'monthly':
-          orderedData = this.getDailyOrderedData(filteredFromExercise, orderedDate, startDate, endDate)
+          orderedData = this.getDailyOrderedData(data, orderedDate, startDate, endDate)
           break;
         case 'annual':
-          orderedData = this.getMonthlyOrderedData(filteredFromExercise, orderedDate, startDate, endDate)
+          orderedData = this.getMonthlyOrderedData(data, orderedDate, startDate, endDate)
           break;
       }
       const seriesData = orderedData.map(el =>{

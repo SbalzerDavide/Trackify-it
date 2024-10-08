@@ -123,13 +123,14 @@ export class ActivityComponent implements OnInit{
     this.formatDataForChart()
   }
 
-  formatDataForChart(){      
+  formatDataForChart(){ 
+    const filteredFromExercise = this.activityService.loadedAllActivities().filter(el => el.exercise_id === this.activeExerciseForm.value.activeExercise!)
+
     this.dataChart.set(this.formatDataChart.formatData(
-      this.activityService.loadedAllActivities(), 
+      filteredFromExercise, 
       this.rangeType(),
       this.activityService.startRange(),
       this.activityService.endRange(),
-      this.activeExerciseForm.value.activeExercise!,
       this.activeGoal()?.quantity
     ))
   }
