@@ -11,6 +11,7 @@ import { BasicExercisesComponent } from './pages/basic-exercises/basic-exercises
 import { ExercisesPageComponent } from './pages/exercises-page/exercises-page.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { GoalPageComponent } from './pages/goal-page/goal-page.component';
+import { ChartsPageComponent } from './pages/charts-page/charts-page.component';
 
 export const routes: Routes = [
   { 
@@ -56,6 +57,10 @@ export const routes: Routes = [
       {
         path: 'goal',
         loadComponent: () => GoalPageComponent
+      },
+      {
+        path: 'charts',
+        loadComponent: () => ChartsPageComponent
       }
 
 
