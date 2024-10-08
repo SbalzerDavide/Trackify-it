@@ -6,7 +6,9 @@
     [value]="rangeType()"
     (change)="changeSel($event)"
   >
-    <mat-button-toggle value="daily">1d</mat-button-toggle>
+    @if(showDaily()){
+      <mat-button-toggle value="daily">1d</mat-button-toggle>
+    }  
     <mat-button-toggle value="weekly">1w</mat-button-toggle>
     <mat-button-toggle value="monthly">1m</mat-button-toggle>
     <mat-button-toggle value="annual">1y</mat-button-toggle>

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -16,8 +16,9 @@ import { DialogDatepickerComponent } from '../../../components/activity/dialog-d
   templateUrl: './range-bar.component.html',
   styleUrl: './range-bar.component.css'
 })
-export class RangeBarComponent {
+export class RangeBarComponent implements OnInit {
   rangeType = input<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
+  showDaily = input<boolean>(true)
 
   changeRange = output<'daily' | 'weekly' | 'monthly' | 'annual' | null>()
 
@@ -47,6 +48,12 @@ export class RangeBarComponent {
       return false
     }
   })
+
+  ngOnInit(): void {
+    if(this.showDaily() === false){
+      this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
+    }
+  }
 
   changeDay(date: Date, daysToAdd: number) {
     let newDate = new Date(date);
