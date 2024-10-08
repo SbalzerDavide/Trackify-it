@@ -37,20 +37,29 @@ export class ActivityService {
     if(data){            
       this.allActivities.set(data)
         
-      let groupingList: any[] = []
-      data.forEach(el => {
-        const check = groupingList.findIndex((element) => element.exercise_id === el.exercise_id)
-        
-        if(check >=0){
-          groupingList[check].quantity = groupingList[check].quantity + el.quantity
-        } else{
-          groupingList.push({...el})
-        }
-      })
+      const groupingList = this.groupingActivity(data)
       this.userActivities.set(groupingList)
     }
-
   }
+
+  async fetchFilteredActivities(exerciseId: string){
+    const { data } = await this.supabaseService.supabase
+      .from(ACTIVITIES)
+      .select(`date, id, quantity, exercise_id,
+        ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`)
+      .gte('date', this.pgFormatDate(this.startRange()))
+      .lte('date', this.pgFormatDate(this.endRange()))
+      .eq('exercise_id', exerciseId)
+      .order('date', { ascending: true })
+          
+    if(data){            
+      this.allActivities.set(data)
+        
+      const groupingList = this.groupingActivity(data)
+      this.userActivities.set(groupingList)
+    }
+  }
+
 
   // SELECT BETWEEN DATE
   async fetchRangeActivities(startDate: Date, endDate: Date){
@@ -139,6 +148,20 @@ export class ActivityService {
     } catch(error){
       console.error(error)
     }
+  }
+
+  groupingActivity(data: any[]){
+    let groupingList: any[] = []
+    data.forEach(el => {
+      const check = groupingList.findIndex((element) => element.exercise_id === el.exercise_id)
+      
+      if(check >=0){
+        groupingList[check].quantity = groupingList[check].quantity + el.quantity
+      } else{
+        groupingList.push({...el})
+      }
+    })
+    return groupingList;
   }
 
   pgFormatDate(date:Date) {
