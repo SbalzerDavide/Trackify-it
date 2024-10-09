@@ -188,6 +188,20 @@ export class FormatDataChartService {
     return myDate;
   }
 
+  getFirstDayYear(date: Date){
+    let myDate = new Date(date)
+    myDate.setMonth(0)
+    myDate.setDate(1)
+    return myDate
+  }
+
+  getLastDayYear(date: Date){
+    let myDate = new Date(date)
+    myDate.setMonth(11)
+    myDate.setDate(31)
+    return myDate
+  }
+
   updateRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual'){    
     if(this.activityService.isRangeAbsolute() === true){
       switch(rangeType){
@@ -201,6 +215,11 @@ export class FormatDataChartService {
         case 'weekly':
           this.activityService.startRange.set(this.getFirstWeekDay(new Date))
           this.activityService.endRange.set(this.getLastWeekDay(new Date))
+          break;
+        case 'annual':
+          this.activityService.startRange.set(this.getFirstDayYear(new Date))
+          this.activityService.endRange.set(this.getLastDayYear(new Date))
+          break;
       }
     } else{
       switch (rangeType) {
