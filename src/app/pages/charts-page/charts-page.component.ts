@@ -3,6 +3,7 @@ import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angula
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { RangeBarComponent } from '../../shared/lib/range-bar/range-bar.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,7 +17,7 @@ import { GoalStore } from '../../components/goal.store';
 @Component({
   selector: 'app-charts-page',
   standalone: true,
-  imports: [RangeBarComponent, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, ChartComponent],
+  imports: [RangeBarComponent, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, ChartComponent, MatSlideToggleModule],
   templateUrl: './charts-page.component.html',
   styleUrl: './charts-page.component.css'
 })
@@ -41,11 +42,12 @@ export class ChartsPageComponent implements OnInit {
     await this.goalStore.loadAll()
 
     this.activeExerciseForm.valueChanges.subscribe({
-      next: (val)=>{
+      next: (val)=>{        
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {
-            "exercise-id": val.activeExercise
+            "exercise-id": val.activeExercise,
+            "is-range-absolute": val.isRangeAbsolute
           },
           queryParamsHandling: 'merge'
         })
@@ -55,11 +57,26 @@ export class ChartsPageComponent implements OnInit {
     this.route.queryParams
       .subscribe({
         next: params =>{
-          this.exerciseId.set(params?.['exercise-id'])       
+          this.exerciseId.set(params?.['exercise-id'])      
+          if(params?.['is-range-absolute']){
+            switch(params?.['is-range-absolute']){
+              case 'true':
+                this.activityService.isRangeAbsolute.set(true)
+                break;
+              case 'false':
+                this.activityService.isRangeAbsolute.set(false)
+                break;
+              default:
+                this.activityService.isRangeAbsolute.set(false)
+                break;
+            }
+          } 
+          
           const rangeType = params?.['range-type']
           if(rangeType){
             this.rangeType.set(rangeType)
           }          
+          this.formatDataChart.updateRange(this.rangeType())
           if(this.exerciseId()){
             this.setDataForChart()
           }
@@ -71,6 +88,7 @@ export class ChartsPageComponent implements OnInit {
     activeExercise: new FormControl('', {
       validators: [ Validators.required]
     }),
+    isRangeAbsolute: new FormControl(false)
   })
 
   exercises = computed(()=>{    
@@ -95,6 +113,14 @@ export class ChartsPageComponent implements OnInit {
     }
   })
 
+  total = computed(()=>{
+    if(this.activityService.loadedActivities().length > 0){
+      return this.activityService.loadedActivities()[0].quantity
+    } else {
+      return 0
+    }
+  })
+
   async onChangeRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual' | null){
     if(rangeType){
       this.router.navigate([], {
@@ -104,9 +130,10 @@ export class ChartsPageComponent implements OnInit {
         },
         queryParamsHandling: 'merge'
       })
-    }
-    if(this.exerciseId()){
-      this.setDataForChart()
+    } else{
+      if(this.exerciseId()){
+        this.setDataForChart()
+      }
     }
   }
 
@@ -116,7 +143,7 @@ export class ChartsPageComponent implements OnInit {
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
       .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
 
-    this.activeGoal.set(activeGoal)
+    this.activeGoal.set(activeGoal)    
     
     this.dataChart.set(this.formatDataChart.formatData(
       this.activityService.loadedAllActivities(), 
@@ -126,4 +153,23 @@ export class ChartsPageComponent implements OnInit {
       this.activeGoal()?.quantity
     ))
   }
+
+  // manageRange(){
+  //   if(this.activityService.isRangeAbsolute() === true){
+  //     switch(this.rangeType()){
+  //       case 'monthly':
+          
+  //         this.activityService.endRange.update((val) => {
+  //           return this.formatDataChart.getLastMonthDay(val)
+  //         })
+
+  //         this.activityService.startRange.update(val => {
+  //           return this.formatDataChart.getFirstMonthday(this.activityService.endRange())
+  //         })
+  //         break;
+  //       case 'weekly':
+          
+  //     }
+  //   }
+  // }
 }

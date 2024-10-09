@@ -138,6 +138,105 @@ export class FormatDataChartService {
     return orderedData        
   }
 
+  getFirstMonthDay(date: Date){
+    const firstDay = new Date(date)
+    firstDay.setDate(1)
+    
+    return firstDay
+  }
+
+  getLastMonthDay(date: Date){
+    let lastDay = new Date (date.setMonth(date.getMonth() + 1))
+    lastDay.setDate(1)
+    lastDay.setDate(lastDay.getDate() -1)
+    
+    return lastDay
+  }
+
+  getFirstWeekDay(date: Date){
+    const currentDate = new Date(date);
+
+    // Ottieni il giorno della settimana (0 = Domenica, 1 = Lunedì, ..., 6 = Sabato)
+    const dayOfWeek = currentDate.getDay() - 1;
+
+    // Calcola il numero di giorni da sottrarre per arrivare alla domenica
+    const difference = currentDate.getDate() - dayOfWeek;
+
+    // Crea un nuovo oggetto Date per il primo giorno della settimana
+    const firstDayOfWeek = new Date(currentDate.setDate(difference));
+    return firstDayOfWeek
+  }
+
+  getLastWeekDay(date: Date){
+    // Convertiamo la data in ingresso in un oggetto Date
+    let myDate = new Date(date);
+
+    // Otteniamo il giorno della settimana (0 per domenica, 6 per sabato)
+    const dayOfWeek = myDate.getDay();
+
+    // Calcoliamo quanti giorni mancano per arrivare a domenica
+    let difference = 7 - dayOfWeek;
+    
+    // Se il giorno è domenica (0), non aggiungiamo nessun giorno
+    if (dayOfWeek === 0) {
+      difference = 0;
+    }
+
+    // Aggiungiamo la differenza per ottenere l'ultimo giorno della settimana (domenica)
+    myDate.setDate(myDate.getDate() + difference);
+
+    return myDate;
+  }
+
+  updateRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual'){    
+    if(this.activityService.isRangeAbsolute() === true){
+      switch(rangeType){
+        case 'daily':        
+          this.activityService.startRange.set(new Date())
+          break;
+        case 'monthly':
+          this.activityService.startRange.set(this.getFirstMonthDay(new Date))
+          this.activityService.endRange.set(this.getLastMonthDay(new Date))          
+          break;
+        case 'weekly':
+          this.activityService.startRange.set(this.getFirstWeekDay(new Date))
+          this.activityService.endRange.set(this.getLastWeekDay(new Date))
+      }
+    } else{
+      switch (rangeType) {
+        case 'daily':        
+          this.activityService.startRange.set(new Date())
+          break;
+        case 'weekly':
+          this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
+          break;
+        case 'monthly':
+          this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -1))
+          break;
+        case 'annual':
+          this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
+          break;
+      }
+  
+    }
+  }
+
+  changeDay(date: Date, daysToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setDate(newDate.getDate() + daysToAdd);
+
+    return newDate;
+  }
+
+  changeMonth(date: Date, monthToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setMonth(newDate.getMonth() + monthToAdd);
+
+    return newDate;
+  }
+
   formatData(
     data: any[], 
     rangeType: 'daily' | 'weekly' | 'monthly' | 'annual',

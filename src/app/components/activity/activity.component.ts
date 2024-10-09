@@ -94,10 +94,10 @@ export class ActivityComponent implements OnInit{
   }
 
   async onChangeRange(rangeType:'daily' | 'weekly' | 'monthly' | 'annual' | null){    
-    await this.activityService.fetchActivities()
     if(rangeType){
       this.rangeType.set(rangeType)
     }
+    // await this.activityService.fetchActivities()
     this.setActiveGoal()
   }
 
@@ -115,11 +115,13 @@ export class ActivityComponent implements OnInit{
     return this.goalStore.goals().find(el => el.range === goalType && el.exercise_id === exerciseId)
   }
 
-  setActiveGoal(){
+  async setActiveGoal(){
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
       .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
 
     this.activeGoal.set(activeGoal)
+    await this.activityService.fetchActivities()
+
     this.formatDataForChart()
   }
 

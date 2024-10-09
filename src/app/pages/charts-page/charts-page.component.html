@@ -1,9 +1,17 @@
 <app-range-bar 
   (changeRange)="onChangeRange($event)" 
   [rangeType]="rangeType()"
+  [isChartPage]="true"
   [showDaily]="false"/>
 
 <form [formGroup]="activeExerciseForm">
+  <div class="toggle-range">
+    <mat-slide-toggle
+      formControlName="isRangeAbsolute">
+      Absolute range
+    </mat-slide-toggle>
+  </div>
+
   <mat-form-field class="full-width">
     <mat-label>Exercise</mat-label>
       <mat-select formControlName="activeExercise">
@@ -13,6 +21,10 @@
       </mat-select>
   </mat-form-field>
 </form>
+
+<div class="total">
+  TOTAL: {{ total() }}
+</div>
 
 <app-chart
   [xData]="dataChart()?.xData"

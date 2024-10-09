@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { ActivityService } from '../../../components/activity.service';
 import { DialogDatepickerComponent } from '../../../components/activity/dialog-datepicker/dialog-datepicker.component';
+import { FormatDataChartService } from '../../../components/format.data.chart.service';
 
 @Component({
   selector: 'app-range-bar',
@@ -19,12 +20,14 @@ import { DialogDatepickerComponent } from '../../../components/activity/dialog-d
 export class RangeBarComponent implements OnInit {
   rangeType = input<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
   showDaily = input<boolean>(true)
+  isChartPage = input<boolean>(false)
 
   changeRange = output<'daily' | 'weekly' | 'monthly' | 'annual' | null>()
 
   readonly dialog = inject(MatDialog);
 
   activityService = inject(ActivityService)
+  formatDataChart = inject(FormatDataChartService)
   
   dateFormat = computed(()=>{
     switch (this.rangeType()) {
@@ -73,22 +76,13 @@ export class RangeBarComponent implements OnInit {
 
 
   async changeSel(e: MatButtonToggleChange){
-    this.activityService.endRange.set(new Date())
     const rangeType = e.value
 
-    switch (rangeType) {
-      case 'daily':        
-        this.activityService.startRange.set(new Date())
-        break;
-      case 'weekly':
-        this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
-        break;
-      case 'monthly':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -1))
-        break;
-      case 'annual':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
-        break;
+    if(this.isChartPage() === false){
+      // solo se non sono in pagina charts
+      this.activityService.endRange.set(new Date())
+  
+      this.formatDataChart.updateRange(rangeType)
     }
     
     this.changeRange.emit(rangeType)

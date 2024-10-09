@@ -19,6 +19,7 @@ export class ActivityService {
 
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
+  isRangeAbsolute = signal<boolean>(false)
     
   supabaseService = inject(SupabaseService)
     

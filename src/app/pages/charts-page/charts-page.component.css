@@ -4,6 +4,27 @@
   height: 100%;
 }
 
+form{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-range{
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.total{
+  font-size: 20px;
+  
+}
+
+mat-slide-toggle{
+  height: 56px;
+}
+
 app-chart{
   flex-grow: 1;
 }
