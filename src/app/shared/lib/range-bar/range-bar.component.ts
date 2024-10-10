@@ -21,6 +21,7 @@ export class RangeBarComponent implements OnInit {
   rangeType = input<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
   showDaily = input<boolean>(true)
   isChartPage = input<boolean>(false)
+  isAbsolute = input<boolean>(false)
 
   changeRange = output<'daily' | 'weekly' | 'monthly' | 'annual' | null>()
 
@@ -58,7 +59,16 @@ export class RangeBarComponent implements OnInit {
     }
   }
 
-  changeDay(date: Date, daysToAdd: number) {
+  private getLastMonthDay(date: Date){
+    let lastDay = new Date (date.setMonth(date.getMonth() + 1))
+    lastDay.setDate(1)
+    lastDay.setDate(lastDay.getDate() -1)
+    
+    return lastDay
+  }
+
+
+  private changeDay(date: Date, daysToAdd: number) {
     let newDate = new Date(date);
 
     newDate.setDate(newDate.getDate() + daysToAdd);
@@ -66,7 +76,7 @@ export class RangeBarComponent implements OnInit {
     return newDate;
   }
 
-  changeMonth(date: Date, monthToAdd: number) {
+  private changeMonth(date: Date, monthToAdd: number) {
     let newDate = new Date(date);
 
     newDate.setMonth(newDate.getMonth() + monthToAdd);
@@ -74,12 +84,11 @@ export class RangeBarComponent implements OnInit {
     return newDate;
   }
 
-
   async changeSel(e: MatButtonToggleChange){
     const rangeType = e.value
 
     if(this.isChartPage() === false){
-      // solo se non sono in pagina charts
+      // only if not in charts page
       this.activityService.endRange.set(new Date())
   
       this.formatDataChart.updateRange(rangeType)
@@ -100,7 +109,14 @@ export class RangeBarComponent implements OnInit {
         break;
       case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -1))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -1))
+
+        if(this.isAbsolute() === true){
+          // remove 40 days for go to previous month and then, with this new day, calc last day of this month
+          const nextMonthDay = this.changeDay(this.activityService.endRange(), - 40)
+          this.activityService.endRange.set(this.getLastMonthDay(nextMonthDay))          
+        } else{
+          this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -1))
+        }
         break;
       case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -12))
@@ -123,7 +139,13 @@ export class RangeBarComponent implements OnInit {
         break;
       case 'monthly':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 1))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 1))
+        if(this.isAbsolute() === true){
+          // add 5 days for go to next month and then, with this new day, calc last day of this month
+          const nextMonthDay = this.changeDay(this.activityService.endRange(), 5)
+          this.activityService.endRange.set(this.getLastMonthDay(nextMonthDay))          
+        } else{
+          this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 1))
+        }
         break;
       case 'annual':
         this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 12))

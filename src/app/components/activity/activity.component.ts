@@ -4,6 +4,7 @@ import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ActivityService } from '../activity.service';
 import { CardComponent } from '../../shared/lib/card/card.component';
@@ -18,7 +19,7 @@ import { ChartFormattedData } from '../chart.model';
 @Component({
   selector: 'app-activity',
   standalone: true,
-  imports: [CardComponent, MatProgressSpinnerModule, ChartComponent, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, RangeBarComponent],
+  imports: [CardComponent, MatProgressSpinnerModule, ChartComponent, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, RangeBarComponent, MatSlideToggleModule],
   templateUrl: './activity.component.html',
   styleUrl: './activity.component.css'
 })
@@ -40,6 +41,7 @@ export class ActivityComponent implements OnInit{
     activeExercise: new FormControl('', {
       validators: [ Validators.required]
     }),
+    isRangeAbsolute: new FormControl(false)
   })
   
   exercises = computed(()=>{    
@@ -70,7 +72,16 @@ export class ActivityComponent implements OnInit{
     await this.goalStore.loadAll()
     this.loading.set(false) 
     this.activeExerciseForm.valueChanges.subscribe({
-      next: ()=>{
+      next: (val)=>{
+        console.log(val);
+        if(val.isRangeAbsolute === true){
+          this.activityService.isRangeAbsolute.set(true)
+        } else if(val.isRangeAbsolute === false){
+          this.activityService.isRangeAbsolute.set(false)
+        }
+        this.formatDataChart.updateRange(this.rangeType())
+
+        
         this.setActiveGoal()
       }
     })   

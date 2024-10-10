@@ -2,7 +2,8 @@
   (changeRange)="onChangeRange($event)" 
   [rangeType]="rangeType()"
   [isChartPage]="true"
-  [showDaily]="false"/>
+  [showDaily]="false"
+  [isAbsolute]="activityService.isRangeAbsolute()"/>
 
 <form [formGroup]="activeExerciseForm">
   <div class="toggle-range">

@@ -1,23 +1,18 @@
-/* mat-button-toggle-group{
-  width: 100%;
+form{
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-mat-button-toggle{
-  flex-grow: 1;
-}
-
-.range{
-  margin: 16px 0;
+.toggle-range{
+  padding: 10px;
   display: flex;
   align-items: center;
 }
 
-.range .unit{
-  display: flex;
-  justify-content: center;
-  flex-grow: 1;
-} */
+mat-slide-toggle{
+  height: 56px;
+}
 
 .cards-container{
   display: flex;

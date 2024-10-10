@@ -1,6 +1,7 @@
 <app-range-bar 
   (changeRange)="onChangeRange($event)" 
-  [rangeType]="rangeType()"/>
+  [rangeType]="rangeType()"
+  [isAbsolute]="activityService.isRangeAbsolute()"/>
 
 @if (loading()) {
   <div class="spinner">
@@ -25,6 +26,13 @@
 @if (rangeType() !== 'daily') {
   <div class="activity-chart">
     <form [formGroup]="activeExerciseForm">
+      <div class="toggle-range">
+        <mat-slide-toggle
+          formControlName="isRangeAbsolute">
+          Absolute range
+        </mat-slide-toggle>
+      </div>
+    
       <mat-form-field class="full-width">
         <mat-label>Exercise</mat-label>
           <mat-select formControlName="activeExercise">
