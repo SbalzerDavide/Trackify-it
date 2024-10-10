@@ -138,22 +138,7 @@ export class FormatDataChartService {
     return orderedData        
   }
 
-  getFirstMonthDay(date: Date){
-    const firstDay = new Date(date)
-    firstDay.setDate(1)
-    
-    return firstDay
-  }
-
-  getLastMonthDay(date: Date){
-    let lastDay = new Date (date.setMonth(date.getMonth() + 1))
-    lastDay.setDate(1)
-    lastDay.setDate(lastDay.getDate() -1)
-    
-    return lastDay
-  }
-
-  getFirstWeekDay(date: Date){
+  private getFirstWeekDay(date: Date){
     const currentDate = new Date(date);
 
     // Ottieni il giorno della settimana (0 = Domenica, 1 = Lunedì, ..., 6 = Sabato)
@@ -167,7 +152,7 @@ export class FormatDataChartService {
     return firstDayOfWeek
   }
 
-  getLastWeekDay(date: Date){
+  private getLastWeekDay(date: Date){
     // Convertiamo la data in ingresso in un oggetto Date
     let myDate = new Date(date);
 
@@ -188,18 +173,49 @@ export class FormatDataChartService {
     return myDate;
   }
 
-  getFirstDayYear(date: Date){
+  private getFirstMonthDay(date: Date){
+    const firstDay = new Date(date)
+    firstDay.setDate(1)
+    
+    return firstDay
+  }
+
+  private getLastMonthDay(date: Date){
+    let lastDay = new Date (date.setMonth(date.getMonth() + 1))
+    lastDay.setDate(1)
+    lastDay.setDate(lastDay.getDate() -1)
+    
+    return lastDay
+  }
+
+  private getFirstDayYear(date: Date){
     let myDate = new Date(date)
     myDate.setMonth(0)
     myDate.setDate(1)
     return myDate
   }
 
-  getLastDayYear(date: Date){
+  private getLastDayYear(date: Date){
     let myDate = new Date(date)
     myDate.setMonth(11)
     myDate.setDate(31)
     return myDate
+  }
+
+  private changeDay(date: Date, daysToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setDate(newDate.getDate() + daysToAdd);
+
+    return newDate;
+  }
+
+  private changeMonth(date: Date, monthToAdd: number) {
+    let newDate = new Date(date);
+
+    newDate.setMonth(newDate.getMonth() + monthToAdd);
+
+    return newDate;
   }
 
   updateRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual'){    
@@ -236,24 +252,7 @@ export class FormatDataChartService {
           this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
           break;
       }
-  
     }
-  }
-
-  changeDay(date: Date, daysToAdd: number) {
-    let newDate = new Date(date);
-
-    newDate.setDate(newDate.getDate() + daysToAdd);
-
-    return newDate;
-  }
-
-  changeMonth(date: Date, monthToAdd: number) {
-    let newDate = new Date(date);
-
-    newDate.setMonth(newDate.getMonth() + monthToAdd);
-
-    return newDate;
   }
 
   formatData(
