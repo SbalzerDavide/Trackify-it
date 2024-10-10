@@ -154,22 +154,4 @@ export class ChartsPageComponent implements OnInit {
     ))
   }
 
-  // manageRange(){
-  //   if(this.activityService.isRangeAbsolute() === true){
-  //     switch(this.rangeType()){
-  //       case 'monthly':
-          
-  //         this.activityService.endRange.update((val) => {
-  //           return this.formatDataChart.getLastMonthDay(val)
-  //         })
-
-  //         this.activityService.startRange.update(val => {
-  //           return this.formatDataChart.getFirstMonthday(this.activityService.endRange())
-  //         })
-  //         break;
-  //       case 'weekly':
-          
-  //     }
-  //   }
-  // }
 }
