@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
 
-import { ACTIVITIES } from './activity-model'; 
+import { ACTIVITIES } from './activity.model'; 
 import { EXERCISES } from './exercises.model';
 import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
 

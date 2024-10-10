@@ -11,7 +11,7 @@ import { ExercisesService } from '../../components/exercises.service';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
 import { ChartFormattedData } from '../../components/chart.model';
 import { ActivityService } from '../../components/activity.service';
-import { FormatDataChartService } from '../../components/format.data.chart.service';
+import { FormatDataChartService } from '../../components/format-data-chart.service';
 import { GoalStore } from '../../components/goal.store';
 
 @Component({

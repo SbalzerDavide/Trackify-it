@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { ActivityService } from '../../../components/activity.service';
 import { DialogDatepickerComponent } from '../../../components/activity/dialog-datepicker/dialog-datepicker.component';
-import { FormatDataChartService } from '../../../components/format.data.chart.service';
+import { FormatDataChartService } from '../../../components/format-data-chart.service';
 
 @Component({
   selector: 'app-range-bar',

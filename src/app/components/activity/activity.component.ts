@@ -10,7 +10,7 @@ import { ActivityService } from '../activity.service';
 import { CardComponent } from '../../shared/lib/card/card.component';
 import { GoalStore } from '../goal.store';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
-import { FormatDataChartService } from '../format.data.chart.service';
+import { FormatDataChartService } from '../format-data-chart.service';
 import { ExercisesService } from '../exercises.service';
 import { RangeBarComponent } from "../../shared/lib/range-bar/range-bar.component";
 import { ChartFormattedData } from '../chart.model';
