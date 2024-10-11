@@ -4,7 +4,7 @@ import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ActivityService } from '../activity.service';
 import { CardComponent } from '../../shared/lib/card/card.component';
@@ -14,7 +14,7 @@ import { FormatDataChartService } from '../format-data-chart.service';
 import { ExercisesService } from '../exercises.service';
 import { RangeBarComponent } from "../../shared/lib/range-bar/range-bar.component";
 import { ChartFormattedData } from '../chart.model';
-
+import { Range } from '../activity.model';
 
 @Component({
   selector: 'app-activity',
@@ -36,6 +36,11 @@ export class ActivityComponent implements OnInit{
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('daily')
   loading = signal<boolean>(true)
   dataChart = signal<ChartFormattedData | null>(null)
+  startRange = signal<Date>(new Date())
+  endRange = signal<Date>(new Date())
+  isRangeAbsolute = signal<boolean>(false)
+  data = signal<any[]>([])
+
 
   activeExerciseForm = new FormGroup({
     activeExercise: new FormControl('', {
@@ -44,7 +49,7 @@ export class ActivityComponent implements OnInit{
     isRangeAbsolute: new FormControl(false)
   })
   
-  exercises = computed(()=>{    
+  exercises = computed(()=>{  
     return this.exerciseService.loadedExercises().map((el)=>{
       return {
         value: el.id,
@@ -66,30 +71,51 @@ export class ActivityComponent implements OnInit{
     }
   })
 
+  loadedActivities = computed(()=>{
+    return this.activityService.getGroupingActivity(this.data()) 
+  })
+
   async ngOnInit() {
-    await this.activityService.fetchActivities()
+    await this.fetchData()
+
     await this.exerciseService.fetchExercises()
     await this.goalStore.loadAll()
     this.loading.set(false) 
     this.activeExerciseForm.valueChanges.subscribe({
-      next: (val)=>{
-        console.log(val);
-        if(val.isRangeAbsolute === true){
-          this.activityService.isRangeAbsolute.set(true)
-        } else if(val.isRangeAbsolute === false){
-          this.activityService.isRangeAbsolute.set(false)
+      next: (val)=>{        
+        let changeIsAbsolute: boolean
+        if(val.isRangeAbsolute === this.isRangeAbsolute()){
+          changeIsAbsolute = false
+        } else{
+          changeIsAbsolute = true
         }
-        this.formatDataChart.updateRange(this.rangeType())
+        
+        if(val.isRangeAbsolute !== undefined && val.isRangeAbsolute !== null){
+          this.isRangeAbsolute.set(val.isRangeAbsolute)
+        }
 
+        if(changeIsAbsolute){
+          this.endRange.set(new Date())
+        }
+
+        const range: Range = this.formatDataChart.updateRange(this.rangeType(), this.isRangeAbsolute(), this.endRange())
+        
+        if(range.startRange){
+          this.startRange.set(range.startRange)
+        }
+        if(range.endRange){
+          this.endRange.set(range.endRange)
+        }
         
         this.setActiveGoal()
       }
     })   
   }
 
-  onUpdateQuantity(e: number, index: number){
+  async onUpdateQuantity(e: number, index: number){
+    const realElementToUpdate = this.data().find(el => el.exercise_id === this.loadedActivities()[index].exercise_id && el.date  === this.loadedActivities()[index].date)
     let newVal = {
-      quantity: this.activityService.loadedActivities()[index].quantity,
+      quantity: realElementToUpdate.quantity,
     }
     if(e === 1){
       newVal.quantity++
@@ -98,18 +124,39 @@ export class ActivityComponent implements OnInit{
     }
 
     if(newVal.quantity > 0){
-      this.activityService.updateActivity(newVal, this.activityService.loadedActivities()[index].id)
+      await this.activityService.updateActivity(newVal, realElementToUpdate.id)
     } else{
-      this.activityService.deleteExercises(this.activityService.loadedActivities()[index].id)
+      await this.activityService.deleteActivity(realElementToUpdate.id)
     }    
+    await this.fetchData()
   }
 
-  async onChangeRange(rangeType:'daily' | 'weekly' | 'monthly' | 'annual' | null){    
+  async onChangeRange(rangeType:'daily' | 'weekly' | 'monthly' | 'annual' ){    
     if(rangeType){
       this.rangeType.set(rangeType)
     }
-    // await this.activityService.fetchActivities()
+    this.endRange.set(new Date())
+    const range: Range = this.formatDataChart.updateRange(this.rangeType(), this.isRangeAbsolute(), this.endRange())
+    
+    if(range.startRange){
+      this.startRange.set(range.startRange)
+    }
+    if(range.endRange){
+      this.endRange.set(range.endRange)
+    }
     this.setActiveGoal()
+  }
+
+  onChangeRangeVal(range: Range){
+    if(range.startRange){
+      this.startRange.set(range.startRange)
+    }
+    if(range.endRange){
+      this.endRange.set(range.endRange)
+    }
+    if(this.activeExerciseForm.value.activeExercise){
+      this.setActiveGoal()
+    }
   }
 
   setCardTitle(basicExercise: {
@@ -126,24 +173,29 @@ export class ActivityComponent implements OnInit{
     return this.goalStore.goals().find(el => el.range === goalType && el.exercise_id === exerciseId)
   }
 
-  async setActiveGoal(){
+  private async fetchData(){
+    const data = await this.activityService.fetchRangeActivities(this.startRange(), this.endRange())
+    this.data.set(data)
+  }
+
+  private async setActiveGoal(){
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
       .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
 
     this.activeGoal.set(activeGoal)
-    await this.activityService.fetchActivities()
+    await this.fetchData()
 
     this.formatDataForChart()
   }
 
-  formatDataForChart(){ 
-    const filteredFromExercise = this.activityService.loadedAllActivities().filter(el => el.exercise_id === this.activeExerciseForm.value.activeExercise!)
+  private formatDataForChart(){ 
+    const filteredFromExercise = this.data().filter(el => el.exercise_id === this.activeExerciseForm.value.activeExercise!)
 
     this.dataChart.set(this.formatDataChart.formatData(
       filteredFromExercise, 
       this.rangeType(),
-      this.activityService.startRange(),
-      this.activityService.endRange(),
+      this.startRange(),
+      this.endRange(),
       this.activeGoal()?.quantity
     ))
   }

@@ -6,9 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ActivityService } from '../../../components/activity.service';
 import { DialogDatepickerComponent } from '../../../components/activity/dialog-datepicker/dialog-datepicker.component';
 import { FormatDataChartService } from '../../../components/format-data-chart.service';
+import { Range } from '../../../components/activity.model';
+
 
 @Component({
   selector: 'app-range-bar',
@@ -17,17 +18,19 @@ import { FormatDataChartService } from '../../../components/format-data-chart.se
   templateUrl: './range-bar.component.html',
   styleUrl: './range-bar.component.css'
 })
-export class RangeBarComponent implements OnInit {
+export class RangeBarComponent {
   rangeType = input<'daily' | 'weekly' | 'monthly' | 'annual'>('daily');
   showDaily = input<boolean>(true)
   isChartPage = input<boolean>(false)
   isAbsolute = input<boolean>(false)
+  startRange = input.required<Date>()
+  endRange = input.required<Date>()
 
-  changeRange = output<'daily' | 'weekly' | 'monthly' | 'annual' | null>()
+  changeRange = output<'daily' | 'weekly' | 'monthly' | 'annual'>()
+  changeRangeVal = output<Range>()
 
   readonly dialog = inject(MatDialog);
 
-  activityService = inject(ActivityService)
   formatDataChart = inject(FormatDataChartService)
   
   dateFormat = computed(()=>{
@@ -44,20 +47,14 @@ export class RangeBarComponent implements OnInit {
   })
 
   isSameDay = computed(()=>{
-    if(this.activityService.startRange().getFullYear() === this.activityService.endRange().getFullYear() &&
-      this.activityService.startRange().getMonth() === this.activityService.endRange().getMonth() &&
-      this.activityService.startRange().getDate() === this.activityService.endRange().getDate()){
+    if(this.startRange().getFullYear() === this.endRange().getFullYear() &&
+      this.startRange().getMonth() === this.endRange().getMonth() &&
+      this.startRange().getDate() === this.endRange().getDate()){
         return true;
     } else{
       return false
     }
   })
-
-  ngOnInit(): void {
-    if(this.showDaily() === false){
-      this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
-    }
-  }
 
   private getLastMonthDay(date: Date){
     let lastDay = new Date (date.setMonth(date.getMonth() + 1))
@@ -86,74 +83,74 @@ export class RangeBarComponent implements OnInit {
 
   async changeSel(e: MatButtonToggleChange){
     const rangeType = e.value
-
-    if(this.isChartPage() === false){
-      // only if not in charts page
-      this.activityService.endRange.set(new Date())
-  
-      this.formatDataChart.updateRange(rangeType)
-    }
-    
     this.changeRange.emit(rangeType)
   }
 
   async goBefore(){
+    let range: Range = {
+      startRange: null,
+      endRange: null
+    }
     switch (this.rangeType()) {
       case 'daily':        
-        this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -1))
-        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), -1))
+        range.startRange = this.changeDay(this.startRange(), -1)
+        range.endRange = this.changeDay(this.endRange(), -1)
         break;
       case 'weekly':
-        this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), -7))
-        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), -7))
+        range.startRange = this.changeDay(this.startRange(), -7)
+        range.endRange = this.changeDay(this.endRange(), -7)
         break;
       case 'monthly':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -1))
+        range.startRange = this.changeMonth(this.startRange(), -1)
 
         if(this.isAbsolute() === true){
           // remove 40 days for go to previous month and then, with this new day, calc last day of this month
-          const nextMonthDay = this.changeDay(this.activityService.endRange(), - 40)
-          this.activityService.endRange.set(this.getLastMonthDay(nextMonthDay))          
+          const nextMonthDay = this.changeDay(this.endRange(), - 40)
+          range.endRange = this.getLastMonthDay(nextMonthDay)
         } else{
-          this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -1))
+          range.endRange = this.changeMonth(this.endRange(), -1)
         }
         break;
       case 'annual':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), -12))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), -12))
+        range.startRange = this.changeMonth(this.startRange(), -12)
+        range.endRange = this.changeMonth(this.endRange(), -12)
         break;
       }
 
-    this.changeRange.emit(null)
+    this.changeRangeVal.emit(range)
   }
 
   async goAfter(){
+    let range: Range = {
+      startRange: null,
+      endRange: null
+    }
     switch (this.rangeType()) {
       case 'daily':        
-        this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 1))
-        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), 1))
+        range.startRange = this.changeDay(this.startRange(), 1)
+        range.endRange = this.changeDay(this.endRange(), 1)
         break;
       case 'weekly':
-        this.activityService.startRange.set(this.changeDay(this.activityService.startRange(), 7))
-        this.activityService.endRange.set(this.changeDay(this.activityService.endRange(), 7))
+        range.startRange = this.changeDay(this.startRange(), 7)
+        range.endRange = this.changeDay(this.endRange(), 7)
         break;
       case 'monthly':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 1))
+        range.startRange = this.changeMonth(this.startRange(), 1)
         if(this.isAbsolute() === true){
           // add 5 days for go to next month and then, with this new day, calc last day of this month
-          const nextMonthDay = this.changeDay(this.activityService.endRange(), 5)
-          this.activityService.endRange.set(this.getLastMonthDay(nextMonthDay))          
+          const nextMonthDay = this.changeDay(this.endRange(), 5)
+          range.endRange = this.getLastMonthDay(nextMonthDay)
         } else{
-          this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 1))
+          range.endRange = this.changeMonth(this.endRange(), 1)
         }
         break;
       case 'annual':
-        this.activityService.startRange.set(this.changeMonth(this.activityService.startRange(), 12))
-        this.activityService.endRange.set(this.changeMonth(this.activityService.endRange(), 12))
+        range.startRange = this.changeMonth(this.startRange(), 12)
+        range.endRange = this.changeMonth(this.endRange(), 12)
         break;
     }
 
-    this.changeRange.emit(null)
+    this.changeRangeVal.emit(range)
   }
 
   openCalendar(){
@@ -162,8 +159,11 @@ export class RangeBarComponent implements OnInit {
   
       dialogRef.afterClosed().subscribe(result => {        
         if (result !== undefined) {
-          this.activityService.startRange.set(new Date(result))
-          this.activityService.endRange.set(new Date(result))
+          const range: Range = {
+            startRange: new Date(result),
+            endRange: new Date(result)
+          }
+          this.changeRangeVal.emit(range)
         }
       });
     }

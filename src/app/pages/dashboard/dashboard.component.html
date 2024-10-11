@@ -2,12 +2,13 @@
 <div class="add-activity">
   <button mat-flat-button (click)="openDialog()">New activity</button>
 </div>
-@if (activityService.loadedActivities().length > 0) {
+@if (loadedActivities().length > 0) {
   <div class="cards-container">
-    @for (activity of activityService.loadedActivities(); track $index) {
+    @for (activity of loadedActivities(); track $index) {
       <app-card       
       [title]="activity.exercises.basic_activity_exercise.name" 
       [quantity]="+activity.quantity"
+      [editQuantity]="true"
       (updateQuantity)="onUpdateQuantity($event, $index)"/>  
     }
   </div>

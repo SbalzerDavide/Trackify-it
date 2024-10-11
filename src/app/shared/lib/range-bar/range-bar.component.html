@@ -21,10 +21,10 @@
   </button>
 
   <div class="unit">
-    <span (click)="openCalendar()" class="start">{{activityService.startRange() | date: dateFormat()}}</span>
+    <span (click)="openCalendar()" class="start">{{startRange() | date: dateFormat()}}</span>
     @if (!isSameDay()) {
       <span> - </span>
-      <span class="end">{{activityService.endRange() | date: dateFormat()}}</span>
+      <span class="end">{{endRange() | date: dateFormat()}}</span>
     }
   </div>
 

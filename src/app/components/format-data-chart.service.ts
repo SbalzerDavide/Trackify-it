@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
+
 import { ActivityService } from './activity.service';
+import { Range } from './activity.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +68,7 @@ export class FormatDataChartService {
       } else if(index === array.length -1){
         activeDate = endDate
       }
-      const activeFormattedDate = this.activityService.pgFormatDate(activeDate)
+      const activeFormattedDate = this.pgFormatDate(activeDate)
       let valueForActiveDate = data.find(el => el.date === activeFormattedDate)
       if(valueForActiveDate){
         orderedData.push({
@@ -218,41 +220,61 @@ export class FormatDataChartService {
     return newDate;
   }
 
-  updateRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual'){    
-    if(this.activityService.isRangeAbsolute() === true){
+  private pgFormatDate(date:Date) {
+    /* Via http://stackoverflow.com/questions/3605214/javascript-add-leading-zeroes-to-date */
+    function zeroPad(d:number) {
+      return ("0" + d).slice(-2)
+    }
+  
+    var parsed = new Date(date)
+  
+    return [parsed.getUTCFullYear(), zeroPad(parsed.getMonth() + 1), zeroPad(parsed.getDate())].join("-");
+  }
+
+  updateRange(rangeType: 'daily' | 'weekly' | 'monthly' | 'annual',
+    isRangeAbsolute: boolean, 
+    endRange: Date
+  ){
+    let range: Range = {
+      startRange: null,
+      endRange: null
+    }
+ 
+    if(isRangeAbsolute === true){
       switch(rangeType){
         case 'daily':        
-          this.activityService.startRange.set(new Date())
+          range.startRange = new Date()
           break;
         case 'monthly':
-          this.activityService.startRange.set(this.getFirstMonthDay(new Date))
-          this.activityService.endRange.set(this.getLastMonthDay(new Date))          
+          range.startRange = this.getFirstMonthDay(new Date)
+          range.endRange = this.getLastMonthDay(new Date)
           break;
         case 'weekly':
-          this.activityService.startRange.set(this.getFirstWeekDay(new Date))
-          this.activityService.endRange.set(this.getLastWeekDay(new Date))
+          range.startRange = this.getFirstWeekDay(new Date)
+          range.endRange = this.getLastWeekDay(new Date)
           break;
         case 'annual':
-          this.activityService.startRange.set(this.getFirstDayYear(new Date))
-          this.activityService.endRange.set(this.getLastDayYear(new Date))
+          range.startRange = this.getFirstDayYear(new Date)
+          range.endRange = this.getLastDayYear(new Date)
           break;
       }
     } else{
       switch (rangeType) {
         case 'daily':        
-          this.activityService.startRange.set(new Date())
+          range.startRange = new Date()
           break;
         case 'weekly':
-          this.activityService.startRange.set(this.changeDay(this.activityService.endRange(), -6))        
+          range.startRange = this.changeDay(endRange, -6)
           break;
         case 'monthly':
-          this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -1))
+          range.startRange = this.changeMonth(endRange, -1)
           break;
         case 'annual':
-          this.activityService.startRange.set(this.changeMonth(this.activityService.endRange(), -12))
+          range.startRange = this.changeMonth(endRange, -12)
           break;
       }
     }
+    return range
   }
 
   formatData(
@@ -262,18 +284,28 @@ export class FormatDataChartService {
     endDate: Date,
     activeGoal: number | undefined
   ){      
+      const dataByDay: any[] = []
+      data.forEach(activity =>{
+        const findIndex = dataByDay.findIndex(el => (el.date === activity.date) && el.exercise_id === activity.exercise_id)
+        if(findIndex >= 0){
+          dataByDay[findIndex].quantity += activity.quantity
+        } else{
+          dataByDay.push({...activity})
+        }
+      })       
+      
       const orderedDate = this.getOrderedDates(rangeType, startDate, endDate)
       let orderedData: {date: string, quantity: number}[] = []
 
       switch(rangeType){
         case 'weekly':
-          orderedData = this.getDailyOrderedData(data, orderedDate, startDate, endDate)
+          orderedData = this.getDailyOrderedData(dataByDay, orderedDate, startDate, endDate)
           break;
         case 'monthly':
-          orderedData = this.getDailyOrderedData(data, orderedDate, startDate, endDate)
+          orderedData = this.getDailyOrderedData(dataByDay, orderedDate, startDate, endDate)
           break;
         case 'annual':
-          orderedData = this.getMonthlyOrderedData(data, orderedDate, startDate, endDate)
+          orderedData = this.getMonthlyOrderedData(dataByDay, orderedDate, startDate, endDate)
           break;
       }
       const seriesData = orderedData.map(el =>{

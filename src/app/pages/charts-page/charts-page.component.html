@@ -1,9 +1,12 @@
 <app-range-bar 
   (changeRange)="onChangeRange($event)" 
+  (changeRangeVal)="onChangeRangeVal($event)" 
   [rangeType]="rangeType()"
   [isChartPage]="true"
   [showDaily]="false"
-  [isAbsolute]="activityService.isRangeAbsolute()"/>
+  [isAbsolute]="isRangeAbsolute()"
+  [startRange]="startRange()"
+  [endRange]="endRange()"/>
 
 <form [formGroup]="activeExerciseForm">
   <div class="toggle-range">
