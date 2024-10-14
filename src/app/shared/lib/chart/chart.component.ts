@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, OnInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
@@ -13,7 +13,7 @@ import { EChartsOption } from 'echarts';
   styleUrl: './chart.component.css',
   providers: [ provideEcharts() ]
 })
-export class ChartComponent implements OnInit{
+export class ChartComponent {
   echartsInstance: any
 
   private destroyRef = inject(DestroyRef)
@@ -47,6 +47,57 @@ export class ChartComponent implements OnInit{
       ],
     }
   })
+  constructor(){
+    effect(()=>{      
+      if(this.echartsInstance){
+        const max = this.getMaxValue(this.data(), this.goal())
+        
+        if(this.echartsInstance){
+          let markLine: {}
+          if(this.goal()){  
+            markLine = {
+              label: 'goal',
+              symbol: ['none'],
+              data: [{
+                name: 'Goal',
+                yAxis: this.goal()
+              }]
+            }        
+          } else{
+            markLine = {
+              label: 'goal',
+              symbol: ['none'],
+              data: [{
+                name: 'Goal',
+                yAxis: 0
+              }]
+            }
+          }
+          
+          this.echartsInstance.setOption({
+            xAxis: {
+              type: this.xType(),
+              data: this.data(),
+            },  
+            yAxis: {
+              max: max
+            },
+            series: [
+              {
+                data: this.data(),
+                type: this.type(),
+                markLine: markLine,
+              },
+            ]
+
+          })
+        }
+
+      }
+    })
+  }
+
+
 
   ngOnInit(): void {
     const subscriptionXData = this.xData$.subscribe({
