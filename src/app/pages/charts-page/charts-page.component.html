@@ -24,6 +24,15 @@
         }
       </mat-select>
   </mat-form-field>
+
+  <!-- <mat-form-field class="full-width">
+    <mat-label>Chart type</mat-label>
+      <mat-select formControlName="chartType">
+        @for (type of chartTypes(); track $index) {
+          <mat-option [value]="type">{{ type }}</mat-option>
+        }
+      </mat-select>
+  </mat-form-field> -->
 </form>
 
 <div class="total">
@@ -35,4 +44,5 @@
   [data]="dataChart()?.data"
   [goal]="activeGoal().quantity" 
   />
+  <!-- [type]="activeExerciseForm.value.chartType!" -->
 

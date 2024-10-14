@@ -27,6 +27,7 @@ export class ChartsPageComponent implements OnInit {
   private destroyRef = inject(DestroyRef)
 
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('weekly')
+  chartTypes = signal<string[]>(['bar', 'line'])
   exerciseId = signal<string | undefined>('')
   dataChart = signal<ChartFormattedData | null>(null)
   activeGoal = signal<any>({})
@@ -117,15 +118,14 @@ export class ChartsPageComponent implements OnInit {
       subscriptionsForm.unsubscribe()
       subscriptionUpdateActivities.unsubscribe()
     })
-
-    
   }
 
   activeExerciseForm = new FormGroup({
     activeExercise: new FormControl('', {
       validators: [ Validators.required]
     }),
-    isRangeAbsolute: new FormControl(false)
+    isRangeAbsolute: new FormControl(false),
+    // chartType: new FormControl<'line' | 'bar'>('bar')
   })
 
   exercises = computed(()=>{    
