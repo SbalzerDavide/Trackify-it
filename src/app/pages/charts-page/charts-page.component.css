@@ -21,6 +21,12 @@ form{
   
 }
 
+.save{
+  display: flex;
+  justify-content: end;
+  margin-bottom: 80px;
+}
+
 mat-slide-toggle{
   height: 56px;
 }

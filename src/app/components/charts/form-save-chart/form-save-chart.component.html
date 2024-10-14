@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Save chart</h2>
+<mat-dialog-content class="mat-typography">
+
+  <form class="chart-form" [formGroup]="saveChartForm">
+    <mat-form-field class="full-width">
+      <mat-label>Chart name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+
+
+    <mat-form-field class="full-width">
+      <mat-label>Exercise</mat-label>
+        <mat-select formControlName="exercise">
+          @for (exercise of data.exercises; track $index) {
+            <mat-option [value]="exercise.value.toString()">{{ exercise.label }}</mat-option>
+          }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Range type</mat-label>
+        <mat-select formControlName="rangeType">
+          @for (type of rangeTypes(); track $index) {
+            <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+    </mat-form-field>
+
+    <div class="toggle-range">
+      <mat-slide-toggle
+        formControlName="isRangeAbsolute">
+        Absolute range
+      </mat-slide-toggle>
+    </div>
+
+    <div class="toggle-range">
+      <mat-slide-toggle
+        formControlName="showIndashboard">
+        Show in dashboard
+      </mat-slide-toggle>
+    </div>
+  
+
+
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="submit" (click)="saveChart()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

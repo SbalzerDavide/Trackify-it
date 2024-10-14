@@ -3,7 +3,8 @@ import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angula
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { RangeBarComponent } from '../../shared/lib/range-bar/range-bar.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,15 +15,20 @@ import { ActivityService } from '../../components/activity.service';
 import { FormatDataChartService } from '../../components/format-data-chart.service';
 import { GoalStore } from '../../components/goal.store';
 import { Range } from '../../components/activity.model';
+import { ChartService } from '../../shared/lib/chart.service';
+import { MatDialog } from '@angular/material/dialog';
+import { FormSaveChartComponent } from '../../components/charts/form-save-chart/form-save-chart.component';
 
 @Component({
   selector: 'app-charts-page',
   standalone: true,
-  imports: [RangeBarComponent, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, ChartComponent, MatSlideToggleModule],
+  imports: [RangeBarComponent, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, ChartComponent, MatSlideToggleModule, MatButtonModule],
   templateUrl: './charts-page.component.html',
   styleUrl: './charts-page.component.css'
 })
 export class ChartsPageComponent implements OnInit {
+
+  readonly dialog = inject(MatDialog);
 
   private destroyRef = inject(DestroyRef)
 
@@ -41,6 +47,7 @@ export class ChartsPageComponent implements OnInit {
   exerciseService = inject(ExercisesService)
   activityService = inject(ActivityService)
   formatDataChart = inject(FormatDataChartService)
+  chartService = inject(ChartService)
 
   constructor( private router: Router, private route: ActivatedRoute) { }
 
@@ -197,5 +204,16 @@ export class ChartsPageComponent implements OnInit {
       this.endRange(),
       this.activeGoal()?.quantity
     ))
+  }
+
+  openDialog() {
+    this.dialog.open(FormSaveChartComponent, {
+      data: {
+        exercises: this.exercises(),
+        activeExercise: this.exerciseId(),
+        isRangeAbsolute: this.isRangeAbsolute(),
+        rangeType: this.rangeType()
+      },
+    });
   }
 }
