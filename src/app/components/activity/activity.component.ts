@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -24,13 +24,14 @@ import { Range } from '../activity.model';
   styleUrl: './activity.component.css'
 })
 export class ActivityComponent implements OnInit{
+
+  private destroyRef = inject(DestroyRef)
+
   activityService = inject(ActivityService)
+  formatDataChart = inject(FormatDataChartService)
+  exerciseService = inject(ExercisesService)
 
   goalStore = inject(GoalStore)
-
-  formatDataChart = inject(FormatDataChartService)
-
-  exerciseService = inject(ExercisesService)
 
   activeGoal = signal<any>({})
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('daily')
@@ -77,11 +78,17 @@ export class ActivityComponent implements OnInit{
 
   async ngOnInit() {
     await this.fetchData()
-
     await this.exerciseService.fetchExercises()
     await this.goalStore.loadAll()
     this.loading.set(false) 
-    this.activeExerciseForm.valueChanges.subscribe({
+
+    const subscriptionUpdateActivities = this.activityService.updateActivities.subscribe(val => {
+      this.fetchData().then(()=>{
+        this.formatDataForChart()
+      })
+    })
+
+    const subscriptionForm = this.activeExerciseForm.valueChanges.subscribe({
       next: (val)=>{        
         let changeIsAbsolute: boolean
         if(val.isRangeAbsolute === this.isRangeAbsolute()){
@@ -109,7 +116,12 @@ export class ActivityComponent implements OnInit{
         
         this.setActiveGoal()
       }
-    })   
+    }) 
+    
+    this.destroyRef.onDestroy(()=>{
+      subscriptionUpdateActivities.unsubscribe()
+      subscriptionForm.unsubscribe()
+    })
   }
 
   async onUpdateQuantity(e: number, index: number){
@@ -154,9 +166,7 @@ export class ActivityComponent implements OnInit{
     if(range.endRange){
       this.endRange.set(range.endRange)
     }
-    if(this.activeExerciseForm.value.activeExercise){
-      this.setActiveGoal()
-    }
+    this.setActiveGoal()
   }
 
   setCardTitle(basicExercise: {
@@ -185,7 +195,9 @@ export class ActivityComponent implements OnInit{
     this.activeGoal.set(activeGoal)
     await this.fetchData()
 
-    this.formatDataForChart()
+    if(this.activeExerciseForm.value.activeExercise){
+      this.formatDataForChart()
+    }
   }
 
   private formatDataForChart(){ 

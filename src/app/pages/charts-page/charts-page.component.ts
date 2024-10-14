@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +24,8 @@ import { Range } from '../../components/activity.model';
 })
 export class ChartsPageComponent implements OnInit {
 
+  private destroyRef = inject(DestroyRef)
+
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('weekly')
   exerciseId = signal<string | undefined>('')
   dataChart = signal<ChartFormattedData | null>(null)
@@ -45,7 +47,11 @@ export class ChartsPageComponent implements OnInit {
     await this.exerciseService.fetchExercises()
     await this.goalStore.loadAll()
 
-    this.activeExerciseForm.valueChanges.subscribe({
+    const subscriptionUpdateActivities = this.activityService.updateActivities.subscribe(val => {
+      this.setDataForChart()
+    })
+
+    const subscriptionsForm = this.activeExerciseForm.valueChanges.subscribe({
       next: (val)=>{        
         this.router.navigate([], {
           relativeTo: this.route,
@@ -58,7 +64,7 @@ export class ChartsPageComponent implements OnInit {
       }
     })   
 
-    this.route.queryParams
+    const subscriptionParams = this.route.queryParams
       .subscribe({
         next: params =>{     
           let changeIsAbsolute: boolean
@@ -105,6 +111,14 @@ export class ChartsPageComponent implements OnInit {
           }
         }
       });
+
+    this.destroyRef.onDestroy(()=>{
+      subscriptionParams.unsubscribe()
+      subscriptionsForm.unsubscribe()
+      subscriptionUpdateActivities.unsubscribe()
+    })
+
+    
   }
 
   activeExerciseForm = new FormGroup({

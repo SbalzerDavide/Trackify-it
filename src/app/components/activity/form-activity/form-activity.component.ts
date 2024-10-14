@@ -65,7 +65,7 @@ export class FormActivityComponent implements OnInit{
           quantity: this.insertActivityForm.value.quantity
         }
         await this.activityService.addActivity(activity)
-        // TODO emit event for fetch activity in all component
+        this.activityService.updateActivities.next(activity)
         this.closeDialog()        
       }
     } catch(error){

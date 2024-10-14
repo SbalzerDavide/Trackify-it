@@ -1,10 +1,10 @@
 import { inject, Injectable, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
-
 import { ACTIVITIES } from './activity.model'; 
 import { EXERCISES } from './exercises.model';
 import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,8 @@ export class ActivityService {
   private allActivities = signal<any[]>([])
   loadedActivities = this.userActivities.asReadonly()
   loadedAllActivities = this.allActivities.asReadonly()
-
+  
+  updateActivities : Subject<any> = new Subject
 
   startRange = signal<Date>(new Date())
   endRange = signal<Date>(new Date())
@@ -146,4 +147,6 @@ export class ActivityService {
   
     return [parsed.getUTCFullYear(), zeroPad(parsed.getMonth() + 1), zeroPad(parsed.getDate())].join("-");
   }
+
+  
 }
