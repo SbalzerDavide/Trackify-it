@@ -12,6 +12,19 @@ export class ChartService {
 
   constructor() { }
 
+  // SELECT
+  async getDashboadCharts(){
+    const { data } = await this.supabaseService.supabase
+      .from(CHART)
+      .select('name, exercise_id, is_range_absolute, range_type, show_in_dashboard')
+      .eq('show_in_dashboard', true)
+    if(data){
+      return data
+    } else{
+      return []
+    }
+  }
+
   // INSERT
   async addChart(chartInfo: ChartInfo){
     try{
@@ -21,6 +34,5 @@ export class ChartService {
     } catch(error){
       console.error(error)
     }
-  }
-  
+  }  
 }
