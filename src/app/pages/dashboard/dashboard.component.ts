@@ -44,44 +44,15 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     await this.goalStore.loadAll()
-    const charts = await this.chartService.getDashboadCharts()
-    const completeChart: ChartInfo[] = await Promise.all(charts.map(async (chart) => {
-      const range: Range = this.formatDataChart.updateRange(chart.range_type, chart.is_range_absolute, new Date())
 
-      const data = await this.activityService.fetchFilteredActivities(chart.exercise_id, range.startRange!, range.endRange!)
-      const total = this.getTotal(data)
-      const rangeGoalForChart = this.getRangeGoalForChart(chart.range_type)
-      const activeGoal = this.goalStore.goals().filter(goal => goal.range === rangeGoalForChart)
-        .find(goal => goal.exercise_id === chart.exercise_id)
+    await this.fetchCharts()
 
-      const dataChart = this.formatDataChart.formatData(
-        data, 
-        chart.range_type,
-        range.startRange!,
-        range.endRange!,
-        activeGoal?.quantity
-      )
-
-      return {
-        ...chart,
-        startRange: range.startRange!,
-        endRange: range.endRange!,
-        total: total,
-        data: {
-          data: dataChart.data,
-          xdata: dataChart.xData,
-          goal: activeGoal?.quantity
-        }
-      }
-      
-    }))
-    this.charts.set(completeChart)
-    
     await this.fetchData()
 
     const subscriptionUpdateActivities = this.activityService.updateActivities.subscribe(val => {
+      this.fetchCharts()
       this.fetchData()
-    })
+      })
     this.destroyRef.onDestroy(()=> {
       subscriptionUpdateActivities.unsubscribe()
     })
@@ -134,5 +105,42 @@ export class DashboardComponent implements OnInit {
       await this.activityService.deleteActivity(realElementToUpdate.id)
     }
     await this.fetchData()
+    await this.fetchCharts()
+  }
+
+  private async fetchCharts(){
+    const charts = await this.chartService.getDashboadCharts()
+    const completeChart: ChartInfo[] = await Promise.all(charts.map(async (chart) => {
+      const range: Range = this.formatDataChart.updateRange(chart.range_type, chart.is_range_absolute, new Date())
+
+      const data = await this.activityService.fetchFilteredActivities(chart.exercise_id, range.startRange!, range.endRange!)
+      const total = this.getTotal(data)
+      const rangeGoalForChart = this.getRangeGoalForChart(chart.range_type)
+      const activeGoal = this.goalStore.goals().filter(goal => goal.range === rangeGoalForChart)
+        .find(goal => goal.exercise_id === chart.exercise_id)
+
+      const dataChart = this.formatDataChart.formatData(
+        data, 
+        chart.range_type,
+        range.startRange!,
+        range.endRange!,
+        activeGoal?.quantity
+      )
+
+      return {
+        ...chart,
+        startRange: range.startRange!,
+        endRange: range.endRange!,
+        total: total,
+        data: {
+          data: dataChart.data,
+          xdata: dataChart.xData,
+          goal: activeGoal?.quantity
+        }
+      }
+      
+    }))
+    
+    this.charts.set(completeChart)
   }
 }
