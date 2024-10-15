@@ -16,18 +16,21 @@
 </section>
 
 <section>
-  <!-- charts -->
   <h3>Charts</h3>
-  @for (chart of charts(); track $index) {
-    <app-custom-card [title]="chart.name" [subtitle]="'total: ' + chart.total">
-      <app-chart content
-        [xData]="chart.data?.xdata!"
-        [data]="chart.data?.data"
-        [goal]="chart.data?.goal" 
-      />  
+  <app-swiper>
+    @for (chart of charts(); track $index) {
+      <swiper-slide swiper-slide-content>
+        <app-custom-card [title]="chart.name" [subtitle]="'total: ' + chart.total">
+          <app-chart content
+            [xData]="chart.data?.xdata!"
+            [data]="chart.data?.data"
+            [goal]="chart.data?.goal" 
+          />  
+    
+        </app-custom-card>        
+      </swiper-slide>
+    }
+  </app-swiper>
 
-    </app-custom-card>
-    <!-- <h4>{{ chart.name }}</h4> -->
-   }
 </section>
 

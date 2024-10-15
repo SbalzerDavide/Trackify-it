@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,13 +13,16 @@ import { GoalStore } from '../../components/goal.store';
 import { ChartInfo } from '../../shared/lib/chart.model';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
 import { CustomCardComponent } from "../../shared/lib/custom-card/custom-card.component";
+import { SwiperComponent } from "../../shared/lib/swiper/swiper.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatButtonModule, CardComponent, ChartComponent, CustomCardComponent],
+  imports: [MatButtonModule, CardComponent, ChartComponent, CustomCardComponent, SwiperComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+
 })
 export class DashboardComponent implements OnInit {
   data = signal<any[]>([])
