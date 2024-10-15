@@ -90,13 +90,9 @@ export class ChartComponent {
     })
     const subscriptionData = this.data$.subscribe({
       next: (value) => {        
-        console.log("next");
-        
         const max = this.getMaxValue(value, this.goal())
         
         if(this.echartsInstance){
-          console.log("inside next");
-
           let markLine: {}
           if(this.goal()){  
             markLine = {
