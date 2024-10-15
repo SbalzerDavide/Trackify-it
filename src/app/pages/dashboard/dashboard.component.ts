@@ -12,11 +12,12 @@ import { Range } from '../../components/activity.model';
 import { GoalStore } from '../../components/goal.store';
 import { ChartInfo } from '../../shared/lib/chart.model';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
+import { CustomCardComponent } from "../../shared/lib/custom-card/custom-card.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatButtonModule, CardComponent, ChartComponent],
+  imports: [MatButtonModule, CardComponent, ChartComponent, CustomCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -39,13 +40,13 @@ export class DashboardComponent implements OnInit {
   })
 
   async ngOnInit() {
-
     await this.goalStore.loadAll()
     const charts = await this.chartService.getDashboadCharts()
     const completeChart: ChartInfo[] = await Promise.all(charts.map(async (chart) => {
       const range: Range = this.formatDataChart.updateRange(chart.range_type, chart.is_range_absolute, new Date())
 
       const data = await this.activityService.fetchFilteredActivities(chart.exercise_id, range.startRange!, range.endRange!)
+      const total = this.getTotal(data)
       const rangeGoalForChart = this.getRangeGoalForChart(chart.range_type)
       const activeGoal = this.goalStore.goals().filter(goal => goal.range === rangeGoalForChart)
         .find(goal => goal.exercise_id === chart.exercise_id)
@@ -62,6 +63,7 @@ export class DashboardComponent implements OnInit {
         ...chart,
         startRange: range.startRange!,
         endRange: range.endRange!,
+        total: total,
         data: {
           data: dataChart.data,
           xdata: dataChart.xData,
@@ -94,6 +96,15 @@ export class DashboardComponent implements OnInit {
         return 'daily'
       case 'annual':
         return 'monthly'
+    }
+  }
+
+  private getTotal(data: any){
+    const goupingActivity = this.activityService.getGroupingActivity(data) 
+    if(goupingActivity.length > 0){
+      return goupingActivity[0].quantity
+    } else {
+      return 0
     }
   }
 

@@ -6,6 +6,7 @@ export interface ChartInfo {
   show_in_dashboard?: boolean,
   startRange?: Date,
   endRange?: Date,
+  total?: string | number,
   data?: {
     type?: 'line' | 'bar', 
     xType?: 'value' | 'category' | 'time' | 'log',

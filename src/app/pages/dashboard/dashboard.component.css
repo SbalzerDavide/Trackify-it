@@ -1,7 +1,5 @@
-.add-activity{
-  display: flex;
-  justify-content: flex-end;
-  margin: 10px 0;
+section{
+  margin: 20px 0;
 }
 
 .cards-container{
