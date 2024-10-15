@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,31 +6,95 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormActivityComponent } from '../../components/activity/form-activity/form-activity.component';
 import { ActivityService } from '../../components/activity.service';
 import { CardComponent } from "../../shared/lib/card/card.component";
+import { ChartService } from '../../shared/lib/chart.service';
+import { FormatDataChartService } from '../../components/format-data-chart.service';
+import { Range } from '../../components/activity.model';
+import { GoalStore } from '../../components/goal.store';
+import { ChartInfo } from '../../shared/lib/chart.model';
+import { ChartComponent } from "../../shared/lib/chart/chart.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatButtonModule, CardComponent],
+  imports: [MatButtonModule, CardComponent, ChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   data = signal<any[]>([])
+  charts = signal<ChartInfo[]>([])
 
   readonly dialog = inject(MatDialog);
 
   activityService = inject(ActivityService)
+  chartService = inject(ChartService)
+  formatDataChart = inject(FormatDataChartService)
+
+  goalStore = inject(GoalStore)
+
+  private destroyRef = inject(DestroyRef)
 
   loadedActivities = computed(()=>{
     return this.activityService.getGroupingActivity(this.data()) 
   })
 
   async ngOnInit() {
+
+    await this.goalStore.loadAll()
+    const charts = await this.chartService.getDashboadCharts()
+    const completeChart: ChartInfo[] = await Promise.all(charts.map(async (chart) => {
+      const range: Range = this.formatDataChart.updateRange(chart.range_type, chart.is_range_absolute, new Date())
+
+      const data = await this.activityService.fetchFilteredActivities(chart.exercise_id, range.startRange!, range.endRange!)
+      const rangeGoalForChart = this.getRangeGoalForChart(chart.range_type)
+      const activeGoal = this.goalStore.goals().filter(goal => goal.range === rangeGoalForChart)
+        .find(goal => goal.exercise_id === chart.exercise_id)
+
+      const dataChart = this.formatDataChart.formatData(
+        data, 
+        chart.range_type,
+        range.startRange!,
+        range.endRange!,
+        activeGoal?.quantity
+      )
+
+      return {
+        ...chart,
+        startRange: range.startRange!,
+        endRange: range.endRange!,
+        data: {
+          data: dataChart.data,
+          xdata: dataChart.xData,
+          goal: activeGoal?.quantity
+        }
+      }
+      
+    }))
+    this.charts.set(completeChart)
+    
     await this.fetchData()
+
+    const subscriptionUpdateActivities = this.activityService.updateActivities.subscribe(val => {
+      this.fetchData()
+    })
+    this.destroyRef.onDestroy(()=> {
+      subscriptionUpdateActivities.unsubscribe()
+    })
   }
 
   openDialog() {
     this.dialog.open(FormActivityComponent);
+  }
+
+  private getRangeGoalForChart(rangeType: 'weekly' | 'monthly' | 'annual'){
+    switch(rangeType){
+      case 'weekly':
+        return 'daily'
+      case 'monthly':
+        return 'daily'
+      case 'annual':
+        return 'monthly'
+    }
   }
 
   private async fetchData(){

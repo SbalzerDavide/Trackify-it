@@ -1,18 +1,30 @@
-<h3>Dashboard</h3>
-<div class="add-activity">
-  <button mat-flat-button (click)="openDialog()">New activity</button>
-</div>
-@if (loadedActivities().length > 0) {
-  <div class="cards-container">
-    @for (activity of loadedActivities(); track $index) {
-      <app-card       
-      [title]="activity.exercises.basic_activity_exercise.name" 
-      [quantity]="+activity.quantity"
-      [editQuantity]="true"
-      (updateQuantity)="onUpdateQuantity($event, $index)"/>  
-    }
-  </div>
-} @else {
-  <p>No activities here...</p>
-}
+<section>
+  <h3>Today's activities</h3>
+  @if (loadedActivities().length > 0) {
+    <div class="cards-container">
+      @for (activity of loadedActivities(); track $index) {
+        <app-card       
+        [title]="activity.exercises.basic_activity_exercise.name" 
+        [quantity]="+activity.quantity"
+        [editQuantity]="true"
+        (updateQuantity)="onUpdateQuantity($event, $index)"/>  
+      }
+    </div>
+  } @else {
+    <p>No activities here...</p>
+  }  
+</section>
+
+<section>
+  <!-- charts -->
+  <h3>Charts</h3>
+  @for (chart of charts(); track $index) {
+    <h4>{{ chart.name }}</h4>
+    <app-chart
+      [xData]="chart.data?.xdata!"
+      [data]="chart.data?.data"
+      [goal]="chart.data?.goal" 
+    />  
+   }
+</section>
 
