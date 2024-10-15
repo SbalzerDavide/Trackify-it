@@ -1,4 +1,5 @@
 export interface ChartInfo {
+  id?: number,
   name?: string,
   exercise_id: string | undefined,
   is_range_absolute?: Boolean,

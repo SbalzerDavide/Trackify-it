@@ -4,7 +4,12 @@
       <mat-icon>insights</mat-icon>
     </div>
     @if (title()) {
-      <mat-card-title>{{ title() }}</mat-card-title>
+      <mat-card-title>
+        <span>{{ title() }}</span>
+        @if (settings() === true) {
+          <mat-icon (click)="openSettings.emit()">settings</mat-icon>
+        }
+      </mat-card-title>
     }
     @if (subtitle()) {
       <mat-card-subtitle>{{ subtitle() }}</mat-card-subtitle>

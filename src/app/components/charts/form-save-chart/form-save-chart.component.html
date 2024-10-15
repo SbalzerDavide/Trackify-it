@@ -11,8 +11,8 @@
     <mat-form-field class="full-width">
       <mat-label>Exercise</mat-label>
         <mat-select formControlName="exercise">
-          @for (exercise of data.exercises; track $index) {
-            <mat-option [value]="exercise.value.toString()">{{ exercise.label }}</mat-option>
+          @for (exercise of exercises(); track $index) {
+            <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
           }
         </mat-select>
     </mat-form-field>

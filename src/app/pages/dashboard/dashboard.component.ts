@@ -14,6 +14,7 @@ import { ChartInfo } from '../../shared/lib/chart.model';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
 import { CustomCardComponent } from "../../shared/lib/custom-card/custom-card.component";
 import { SwiperComponent } from "../../shared/lib/swiper/swiper.component";
+import { FormSaveChartComponent } from '../../components/charts/form-save-chart/form-save-chart.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,13 +54,34 @@ export class DashboardComponent implements OnInit {
       this.fetchCharts()
       this.fetchData()
       })
+    const subscriptionUpdateChiarts = this.chartService.updateCharts.subscribe(val => {
+      this.fetchCharts()
+    })
     this.destroyRef.onDestroy(()=> {
       subscriptionUpdateActivities.unsubscribe()
+      subscriptionUpdateChiarts.unsubscribe()
     })
   }
 
   openDialog() {
     this.dialog.open(FormActivityComponent);
+  }
+
+  onOpenSettings(chartIndex: number){
+    const chart = this.charts()[chartIndex]
+    
+    this.dialog.open(FormSaveChartComponent, {
+      data: {
+        activeExercise: chart.exercise_id,
+        name: chart.name,
+        isRangeAbsolute: chart.is_range_absolute,
+        rangeType: chart.range_type,
+        showInDashboard: chart.show_in_dashboard,
+        chartId: chart.id
+      },
+    });
+
+    
   }
 
   private getRangeGoalForChart(rangeType: 'weekly' | 'monthly' | 'annual'){

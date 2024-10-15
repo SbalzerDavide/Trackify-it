@@ -34,7 +34,7 @@ export class ChartsPageComponent implements OnInit {
 
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('weekly')
   chartTypes = signal<string[]>(['bar', 'line'])
-  exerciseId = signal<string | undefined>('')
+  exerciseId = signal<number | undefined>(undefined)
   dataChart = signal<ChartFormattedData | null>(null)
   activeGoal = signal<any>({})
   startRange = signal<Date>(new Date(new Date().setDate(new Date().getDate() - 6)))
@@ -82,7 +82,7 @@ export class ChartsPageComponent implements OnInit {
             changeIsAbsolute = true
           }
   
-          this.exerciseId.set(params?.['exercise-id'])      
+          this.exerciseId.set(+params?.['exercise-id'])      
           if(params?.['is-range-absolute']){
             switch(params?.['is-range-absolute']){
               case 'true':
@@ -189,7 +189,7 @@ export class ChartsPageComponent implements OnInit {
   }
 
   private async setDataForChart(){    
-    const data = await this.activityService.fetchFilteredActivities(this.exerciseId()!, this.startRange(), this.endRange())
+    const data = await this.activityService.fetchFilteredActivities(this.exerciseId()!.toString(), this.startRange(), this.endRange())
     this.data.set(data)
 
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
@@ -209,7 +209,6 @@ export class ChartsPageComponent implements OnInit {
   openDialog() {
     this.dialog.open(FormSaveChartComponent, {
       data: {
-        exercises: this.exercises(),
         activeExercise: this.exerciseId(),
         isRangeAbsolute: this.isRangeAbsolute(),
         rangeType: this.rangeType()

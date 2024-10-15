@@ -20,13 +20,16 @@
   <app-swiper>
     @for (chart of charts(); track $index) {
       <swiper-slide swiper-slide-content>
-        <app-custom-card [title]="chart.name" [subtitle]="'total: ' + chart.total">
+        <app-custom-card 
+          [title]="chart.name" 
+          [subtitle]="'total: ' + chart.total" 
+          [settings]="true"
+          (openSettings)="onOpenSettings($index)">
           <app-chart content
             [xData]="chart.data?.xdata!"
             [data]="chart.data?.data"
             [goal]="chart.data?.goal" 
           />  
-    
         </app-custom-card>        
       </swiper-slide>
     }

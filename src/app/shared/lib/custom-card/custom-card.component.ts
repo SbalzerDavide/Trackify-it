@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,4 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class CustomCardComponent {
   title = input<string | undefined>('')
   subtitle = input<string | number | undefined>('')
+  settings = input<boolean>(false)
+
+  openSettings = output()
 }
