@@ -1,13 +1,14 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialog } from '@angular/material/dialog';
 
 import { RangeBarComponent } from '../../shared/lib/range-bar/range-bar.component';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ExercisesService } from '../../components/exercises.service';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
 import { ChartFormattedData } from '../../components/chart.model';
@@ -16,7 +17,6 @@ import { FormatDataChartService } from '../../components/format-data-chart.servi
 import { GoalStore } from '../../components/goal.store';
 import { Range } from '../../components/activity.model';
 import { ChartService } from '../../shared/lib/chart.service';
-import { MatDialog } from '@angular/material/dialog';
 import { FormSaveChartComponent } from '../../components/charts/form-save-chart/form-save-chart.component';
 
 @Component({
