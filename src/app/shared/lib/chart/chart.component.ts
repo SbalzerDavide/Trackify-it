@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, input, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
@@ -72,52 +72,6 @@ export class ChartComponent {
       ],
     }
   })
-  constructor(){
-    effect(()=>{            
-      if(this.echartsInstance){
-        const max = this.getMaxValue(this.data(), this.goal())
-        let markLine: {}
-        if(this.goal()){  
-          markLine = {
-            label: 'goal',
-            symbol: ['none'],
-            data: [{
-              name: 'Goal',
-              yAxis: this.goal()
-            }]
-          }        
-        } else{
-          markLine = {
-            label: 'goal',
-            symbol: ['none'],
-            data: [{
-              name: 'Goal',
-              yAxis: 0
-            }]
-          }
-        }
-        
-        this.echartsInstance.setOption({
-          xAxis: {
-            type: this.xType(),
-            data: this.data(),
-          },  
-          yAxis: {
-            max: max
-          },
-          series: [
-            {
-              data: this.data(),
-              type: this.type(),
-              markLine: markLine,
-            },
-          ]
-
-        })
-
-      }
-    })
-  }
 
 
 
@@ -136,9 +90,13 @@ export class ChartComponent {
     })
     const subscriptionData = this.data$.subscribe({
       next: (value) => {        
+        console.log("next");
+        
         const max = this.getMaxValue(value, this.goal())
         
         if(this.echartsInstance){
+          console.log("inside next");
+
           let markLine: {}
           if(this.goal()){  
             markLine = {
