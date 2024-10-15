@@ -237,7 +237,7 @@ export class FormatDataChartService {
   ){
     let range: Range = {
       startRange: null,
-      endRange: null
+      endRange: endRange
     }
  
     if(isRangeAbsolute === true){
