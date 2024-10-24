@@ -48,5 +48,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+  @if (data.chartId) {
+    <button mat-button (click)="delete()" cdkFocusInitial>Delete</button>
+  }
   <button mat-button type="submit" (click)="saveChart()" cdkFocusInitial>Save</button>
 </mat-dialog-actions>

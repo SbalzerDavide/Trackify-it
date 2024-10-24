@@ -88,4 +88,10 @@ export class FormSaveChartComponent implements OnInit{
     }
   }
 
+  async delete(){
+    await this.chartService.deleteChart(this.data.chartId)
+    this.chartService.updateCharts.next(null)
+    this.closeDialog()
+  }
+
 }

@@ -41,6 +41,7 @@ export class ChartService {
     }
   }  
 
+  // UPDATE
   async updateChart(newVal: {}, id: string){
     const { error } = await this.supabaseService.supabase
       .from(CHART)
@@ -50,6 +51,19 @@ export class ChartService {
       if (error) {
         console.error(error.message);
       }  
+  }
+
+  // DELETE
+  async deleteChart(id: string){
+    try{
+      await this.supabaseService.supabase
+        .from(CHART)
+        .delete()
+        .eq('id', id)     
+      
+    } catch(error){
+      console.error(error)
+    }
   }
 
 
