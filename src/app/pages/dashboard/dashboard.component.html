@@ -19,7 +19,7 @@
   <h3>Charts</h3>
   <app-swiper>
     @for (chart of charts(); track $index) {
-      <swiper-slide swiper-slide-content>
+      <swiper-slide (click)="goToChart(chart)" swiper-slide-content>
         <app-custom-card 
           [title]="chart.name" 
           [subtitle]="'total: ' + chart.total" 

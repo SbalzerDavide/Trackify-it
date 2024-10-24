@@ -60,7 +60,7 @@ export class ChartsPageComponent implements OnInit {
     })
 
     const subscriptionsForm = this.activeExerciseForm.valueChanges.subscribe({
-      next: (val)=>{        
+      next: (val)=>{                
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {
@@ -82,7 +82,11 @@ export class ChartsPageComponent implements OnInit {
             changeIsAbsolute = true
           }
   
-          this.exerciseId.set(+params?.['exercise-id'])      
+          this.exerciseId.set(+params?.['exercise-id'])    
+          // if(this.exerciseId()){            
+          //   this.activeExerciseForm.controls.activeExercise.setValue(this.exerciseId()!.toString())
+          // }
+
           if(params?.['is-range-absolute']){
             switch(params?.['is-range-absolute']){
               case 'true':
@@ -193,7 +197,7 @@ export class ChartsPageComponent implements OnInit {
     this.data.set(data)
 
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
-      .find(goal => goal.exercise_id === this.activeExerciseForm.value.activeExercise)
+      .find(goal => +goal.exercise_id === this.exerciseId())
 
     this.activeGoal.set(activeGoal)    
     
