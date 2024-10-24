@@ -41,6 +41,7 @@ export class ChartsPageComponent implements OnInit {
   endRange = signal<Date>(new Date())
   isRangeAbsolute = signal<boolean>(false)
   data = signal<any[]>([])
+  disableFormChangeNatigation = signal<boolean>(false)
 
   goalStore = inject(GoalStore)
 
@@ -60,15 +61,19 @@ export class ChartsPageComponent implements OnInit {
     })
 
     const subscriptionsForm = this.activeExerciseForm.valueChanges.subscribe({
-      next: (val)=>{                
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            "exercise-id": val.activeExercise,
-            "is-range-absolute": val.isRangeAbsolute
-          },
-          queryParamsHandling: 'merge'
-        })
+      next: (val)=>{       
+         if(!this.disableFormChangeNatigation()){
+           this.router.navigate([], {
+             relativeTo: this.route,
+             queryParams: {
+               "exercise-id": val.activeExercise,
+               "is-range-absolute": val.isRangeAbsolute
+             },
+             queryParamsHandling: 'merge'
+           })
+         } else{
+          this.disableFormChangeNatigation.set(false)
+         }
       }
     })   
 
@@ -83,9 +88,6 @@ export class ChartsPageComponent implements OnInit {
           }
   
           this.exerciseId.set(+params?.['exercise-id'])    
-          // if(this.exerciseId()){            
-          //   this.activeExerciseForm.controls.activeExercise.setValue(this.exerciseId()!.toString())
-          // }
 
           if(params?.['is-range-absolute']){
             switch(params?.['is-range-absolute']){
@@ -100,6 +102,14 @@ export class ChartsPageComponent implements OnInit {
                 break;
             }
           } 
+
+          if(this.exerciseId()){   
+            this.disableFormChangeNatigation.set(true)                   
+            this.activeExerciseForm.controls.isRangeAbsolute.setValue(this.isRangeAbsolute())
+            this.disableFormChangeNatigation.set(true)      
+            this.activeExerciseForm.controls.activeExercise.setValue(this.exerciseId()!)
+          }
+
           
           const rangeType = params?.['range-type']
           if(rangeType){
@@ -132,7 +142,7 @@ export class ChartsPageComponent implements OnInit {
   }
 
   activeExerciseForm = new FormGroup({
-    activeExercise: new FormControl('', {
+    activeExercise: new FormControl(0, {
       validators: [ Validators.required]
     }),
     isRangeAbsolute: new FormControl(false),
