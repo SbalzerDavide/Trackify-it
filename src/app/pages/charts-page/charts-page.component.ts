@@ -153,7 +153,7 @@ export class ChartsPageComponent implements OnInit {
     return this.exerciseService.loadedExercises().map((el)=>{
       return {
         value: el.id,
-        label: el.basic_activity_exercise.name
+        label: el.basic_activity_exercise?.name ?? el.name
       }
     })
   })

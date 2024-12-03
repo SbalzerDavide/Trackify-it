@@ -1,15 +1,20 @@
 <h2 mat-dialog-title>Add new exercise</h2>
+<mat-dialog-content>Select basic activity or set new name</mat-dialog-content>
 <mat-dialog-content class="mat-typography">
 
   <form class="exercise-form" [formGroup]="insertExerciseForm">
       <mat-form-field class="full-width">
-        <mat-label>Exercise name</mat-label>
+        <mat-label>basic activity</mat-label>
         <mat-select formControlName="basicExercise">
           @for (basicActivity of basicActivities(); track $index) {
             <mat-option [value]="basicActivity.value">{{ basicActivity.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Exercise name</mat-label>
+        <input type="text" matInput formControlName="name">
+      </mat-form-field>  
       <mat-form-field class="full-width">
         <mat-label>Number of repetitions</mat-label>
         <input type="number" matInput formControlName="repetitions">

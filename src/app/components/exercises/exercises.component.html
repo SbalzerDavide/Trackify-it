@@ -2,7 +2,7 @@
   @for (exercise of exerciseService.loadedExercises(); track $index) {
     <app-card       
     [title]="exercise.number_of_repetitions" 
-    [description]=" exercise.basic_activity_exercise.name"/>  
+    [description]="exercise.basic_activity_exercise?.name ?? exercise.name"/>  
   }
 </div>
 

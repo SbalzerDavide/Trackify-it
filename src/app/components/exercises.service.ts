@@ -18,7 +18,7 @@ export class ExercisesService {
   async fetchExercises(){   
     const { data } = await this.supabaseService.supabase
       .from(EXERCISES)
-      .select(`number_of_repetitions, id, 
+      .select(`number_of_repetitions, id, name,
         ${BASIC_ACTIVITY_EXERCISE}( name, cal)`)
       
     if(data){

@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,28 +44,50 @@ export class FormExerciseComponent implements OnInit{
   })
 
   insertExerciseForm = new FormGroup({
-    basicExercise: new FormControl('', {
-      validators: [Validators.required]
-    }),
+    basicExercise: new FormControl(''),
+    name: new FormControl(''),
     repetitions: new FormControl('', {
       validators: [Validators.required, Validators.min(1)]
-    })
-  })
+    }),
+  }, { validators: this.oneFieldOnlyValidator('basicExercise', 'name') })
 
   async insertExercise(){
-    try{      
-      if(this.insertExerciseForm.valid){
-        await this.exerciseService.addExercises({
-          number_of_repetitions: this.insertExerciseForm.value.repetitions,
-          basic_exercise_id: this.insertExerciseForm.value.basicExercise,        
-        })
-        this.exerciseService.fetchExercises()
-        this.closeDialog()        
+    if(this.insertExerciseForm.valid){
+      try{      
+        if(this.insertExerciseForm.valid){
+          const newExercise: {
+            number_of_repetitions: string;
+            name?: string;
+            basic_exercise_id?: string;
+          } = {
+            number_of_repetitions: this.insertExerciseForm.value.repetitions!,
+          }
+          if(this.insertExerciseForm.value.basicExercise){
+            newExercise.basic_exercise_id = this.insertExerciseForm.value.basicExercise
+          } else if(this.insertExerciseForm.value.name){
+            newExercise.name = this.insertExerciseForm.value.name
+          }
+          await this.exerciseService.addExercises(newExercise)
+          this.exerciseService.fetchExercises()
+          this.closeDialog()        
+        }
+      } catch(error){
+        console.error(error)
       }
-    } catch(error){
-      console.error(error)
     }
-    
+  }
+
+  oneFieldOnlyValidator(field1: string, field2: string): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const field1Value = group.get(field1)?.value;
+      const field2Value = group.get(field2)?.value;
+  
+      if ((field1Value && field2Value) || (!field1Value && !field2Value)) {
+        return { oneFieldOnly: true }; // Errore se entrambi o nessuno dei due sono popolati
+      }
+  
+      return null; // Valido
+    };
   }
 
 }
