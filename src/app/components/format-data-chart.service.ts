@@ -183,7 +183,9 @@ export class FormatDataChartService {
   }
 
   private getLastMonthDay(date: Date){
-    let lastDay = new Date (date.setMonth(date.getMonth() + 1))
+    // set a day in the middle of the month for make sure not move forward two months
+    const middeleDay = new Date(date.setDate(15))
+    let lastDay = new Date (middeleDay.setMonth(middeleDay.getMonth() + 1))
     lastDay.setDate(1)
     lastDay.setDate(lastDay.getDate() -1)
     
