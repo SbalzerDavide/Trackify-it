@@ -44,6 +44,7 @@ export class FormBasicActivityComponent {
           cal: +this.insertBaseActivityForm.value.cal!,
         }
         await this.basicExerciseService.addBasicActivity(activity)
+        this.basicExerciseService.fetchBasicActivities()
         this.closeDialog()        
       }
     } catch(error){

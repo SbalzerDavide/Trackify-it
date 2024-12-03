@@ -59,6 +59,7 @@ export class FormExerciseComponent implements OnInit{
           number_of_repetitions: this.insertExerciseForm.value.repetitions,
           basic_exercise_id: this.insertExerciseForm.value.basicExercise,        
         })
+        this.exerciseService.fetchExercises()
         this.closeDialog()        
       }
     } catch(error){
