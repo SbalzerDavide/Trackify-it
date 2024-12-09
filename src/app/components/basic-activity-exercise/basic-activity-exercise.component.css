@@ -1,6 +1,7 @@
 .action{
   display: flex;
   justify-content: end;
+  margin-bottom: 80px;
 }
 .cards-container{
   display: flex;
