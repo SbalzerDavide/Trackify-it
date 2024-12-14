@@ -38,10 +38,10 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => DashboardComponent
       },
-      // {
-      //   path: 'home',
-      //   loadComponent: () => HomeComponent
-      // },
+      {
+        path: 'home',
+        loadComponent: () => HomeComponent
+      },
       {
         path: 'basic-exercise',
         loadComponent: () => BasicExercisesComponent
