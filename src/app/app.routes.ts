@@ -31,17 +31,17 @@ export const routes: Routes = [
     loadChildren: ()=> [
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
       },
       {
         path: 'dashboard',
         loadComponent: () => DashboardComponent
       },
-      {
-        path: 'home',
-        loadComponent: () => HomeComponent
-      },
+      // {
+      //   path: 'home',
+      //   loadComponent: () => HomeComponent
+      // },
       {
         path: 'basic-exercise',
         loadComponent: () => BasicExercisesComponent
