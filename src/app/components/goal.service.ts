@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 
 import { Goal, GOAL } from './goal.model';
 import { EXERCISES } from './exercises.model';
-import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
+import { BASIC_ENTITIES } from './basic-activity.model';
 import { SupabaseService } from '../shared/supabase/supabase.service';
 
 @Injectable({
@@ -20,7 +20,7 @@ export class GoalService {
       const { data } = await this.supabaseService.supabase
         .from(GOAL)
         .select(`quantity, range, id, exercise_id,
-        ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name ))`)
+        ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name ))`)
         .returns<Goal[]>()
       
       if(data){

@@ -4,7 +4,7 @@
     <div class="cards-container">
       @for (activity of loadedActivities(); track $index) {
         <app-card       
-        [title]="activity.exercises?.name ? activity.exercises.name : activity.exercises?.basic_activity_exercise.name" 
+        [title]="activity.exercises?.name ? activity.exercises.name : activity.exercises?.basic_entities.name" 
         [quantity]="+activity.quantity"
         [editQuantity]="true"
         (updateQuantity)="onUpdateQuantity($event, $index)"/>  

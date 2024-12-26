@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { SupabaseService } from '../shared/supabase/supabase.service';
 import { ACTIVITIES } from './activity.model';
 import { EXERCISES } from './exercises.model';
-import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
+import { BASIC_ENTITIES } from './basic-activity.model';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .select(
         `date, id, quantity, exercise_id,
-        ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`
+        ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
@@ -53,7 +53,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .select(
         `date, id, quantity, exercise_id,
-        ${EXERCISES}( number_of_repetitions, name, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`
+        ${EXERCISES}( number_of_repetitions, name, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
@@ -75,7 +75,7 @@ export class ActivityService {
     const { error } = await this.supabaseService.supabase
       .from(ACTIVITIES)
       .insert(activity).select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`);
+      ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
     if (error) {
       console.error(error.message);
     }
@@ -87,7 +87,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .update(newVal)
       .eq('id', id).select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ACTIVITY_EXERCISE}( name, cal))`);
+      ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
 
     if (data) {
       // update local data

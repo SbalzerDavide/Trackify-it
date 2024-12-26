@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 
-import { BasicActivityExerciseService } from '../basic-activity-exercise.service';
+import { BasicEntitiesService } from '../basic-entities.service';
 import { CardComponent } from "../../shared/lib/card/card.component";
 import { FormBasicActivityComponent } from "./form-basic-activity/form-basic-activity.component";
 
@@ -8,19 +8,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-basic-activity-exercise',
+  selector: 'app-basic-entities',
   standalone: true,
   imports: [ CardComponent, FormBasicActivityComponent, MatButtonModule],
-  templateUrl: './basic-activity-exercise.component.html',
-  styleUrl: './basic-activity-exercise.component.css'
+  templateUrl: './basic-entities.component.html',
+  styleUrl: './basic-entities.component.css'
 })
-export class BasicActivityExerciseComponent implements OnInit {
-  basicExerciseService = inject(BasicActivityExerciseService)
+export class BasicEntities implements OnInit {
+  basicEntitiesService = inject(BasicEntitiesService)
 
   readonly dialog = inject(MatDialog);
 
   ngOnInit(): void {    
-    this.basicExerciseService.fetchBasicActivities()
+    this.basicEntitiesService.fetchBasicActivities()
   }
 
   openDialog() {

@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 
 import { ExercisesService } from '../../exercises.service';
-import { BasicActivityExerciseService } from '../../basic-activity-exercise.service';
+import { BasicEntitiesService } from '../../basic-entities.service';
 import { FormBasicActivityComponent } from '../../basic-activity-exercise/form-basic-activity/form-basic-activity.component';
 
 @Component({
@@ -22,12 +22,12 @@ import { FormBasicActivityComponent } from '../../basic-activity-exercise/form-b
 })
 export class FormExerciseComponent implements OnInit{
   exerciseService = inject(ExercisesService)
-  basicActivityService = inject(BasicActivityExerciseService)
+  basicEntitiesService = inject(BasicEntitiesService)
 
   constructor(public dialogRef: MatDialogRef<FormBasicActivityComponent>) { }
 
   async ngOnInit() {
-    await this.basicActivityService.fetchBasicActivities()
+    await this.basicEntitiesService.fetchBasicActivities()
   }
 
   closeDialog() {
@@ -35,7 +35,7 @@ export class FormExerciseComponent implements OnInit{
   }
 
   basicActivities = computed(()=>{    
-    return this.basicActivityService.loadedBasicActivities().map((el)=>{
+    return this.basicEntitiesService.loadedBasicActivities().map((el)=>{
       return {
         value: el.id,
         label: el.name
@@ -44,12 +44,12 @@ export class FormExerciseComponent implements OnInit{
   })
 
   insertExerciseForm = new FormGroup({
-    basicExercise: new FormControl(''),
+    basicEntity: new FormControl(''),
     name: new FormControl(''),
     repetitions: new FormControl('', {
       validators: [Validators.required, Validators.min(1)]
     }),
-  }, { validators: this.oneFieldOnlyValidator('basicExercise', 'name') })
+  }, { validators: this.oneFieldOnlyValidator('basicEntity', 'name') })
 
   async insertExercise(){
     if(this.insertExerciseForm.valid){
@@ -62,8 +62,8 @@ export class FormExerciseComponent implements OnInit{
           } = {
             number_of_repetitions: this.insertExerciseForm.value.repetitions!,
           }
-          if(this.insertExerciseForm.value.basicExercise){
-            newExercise.basic_exercise_id = this.insertExerciseForm.value.basicExercise
+          if(this.insertExerciseForm.value.basicEntity){
+            newExercise.basic_exercise_id = this.insertExerciseForm.value.basicEntity
           } else if(this.insertExerciseForm.value.name){
             newExercise.name = this.insertExerciseForm.value.name
           }

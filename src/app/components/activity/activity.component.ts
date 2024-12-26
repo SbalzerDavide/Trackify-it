@@ -76,7 +76,7 @@ export class ActivityComponent implements OnInit {
     return this.exerciseService.loadedExercises().map((el) => {
       return {
         value: el.id,
-        label: el.basic_activity_exercise.name,
+        label: el.name ?? el.basic_entities.name,
       };
     });
   });
@@ -204,19 +204,19 @@ export class ActivityComponent implements OnInit {
     this.setActiveGoal();
   }
 
-  setCardTitle(basicExercise: {
+  setCardTitle(basicEntity: {
     name: string;
     number_of_repetitions: string;
-    basic_activity_exercise: {
-      cal: string;
+    basic_entities: {
+      unit: string;
       name: string;
     };
   }) {
-    console.log(basicExercise);
-    if(basicExercise.name){
-      return basicExercise.name
+    console.log(basicEntity);
+    if(basicEntity.name){
+      return basicEntity.name
     } else{
-      return `${basicExercise.number_of_repetitions} x ${basicExercise.basic_activity_exercise.name}`;
+      return `${basicEntity.number_of_repetitions} x ${basicEntity.basic_entities.name}`;
     }
   }
 

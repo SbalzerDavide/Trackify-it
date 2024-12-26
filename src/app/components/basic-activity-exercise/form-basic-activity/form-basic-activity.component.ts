@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BasicActivityExerciseService } from '../../basic-activity-exercise.service';
+import { BasicEntitiesService } from '../../basic-entities.service';
 
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +17,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './form-basic-activity.component.css'
 })
 export class FormBasicActivityComponent {
-  basicExerciseService = inject(BasicActivityExerciseService)
+  basicEntitiesService = inject(BasicEntitiesService)
 
   constructor(public dialogRef: MatDialogRef<FormBasicActivityComponent>) { }
 
@@ -30,7 +30,7 @@ export class FormBasicActivityComponent {
       validators: [Validators.required]
     }),
     description: new FormControl(''),
-    cal: new FormControl('',{
+    unit: new FormControl('',{
       validators: [Validators.required]
     })
   })
@@ -41,10 +41,10 @@ export class FormBasicActivityComponent {
         const activity = {
           name: this.insertBaseActivityForm.value.name!,
           description: this.insertBaseActivityForm.value.description!,
-          cal: +this.insertBaseActivityForm.value.cal!,
+          unit: +this.insertBaseActivityForm.value.unit!,
         }
-        await this.basicExerciseService.addBasicActivity(activity)
-        this.basicExerciseService.fetchBasicActivities()
+        await this.basicEntitiesService.addBasicActivity(activity)
+        this.basicEntitiesService.fetchBasicActivities()
         this.closeDialog()        
       }
     } catch(error){

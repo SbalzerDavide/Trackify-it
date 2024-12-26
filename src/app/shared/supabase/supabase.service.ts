@@ -29,7 +29,7 @@ export class SupabaseService {
 
   // api
   async getFromTable(table: string, columns: string){
-    // const data = await this.supabase.from('basic_activity_exercise').select(`name, description, cal`)
+    // const data = await this.supabase.from('basic_entities').select(`name, description, unit`)
     //   .eq('user_id', this.session?.user.id)
     // console.log(data);
     

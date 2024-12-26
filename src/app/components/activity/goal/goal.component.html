@@ -2,7 +2,7 @@
 @for (exercise of exerciseService.loadedExercises(); track $index) {
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
-      <mat-panel-title> {{ exercise.basic_activity_exercise.name }} x {{ exercise.number_of_repetitions }}</mat-panel-title>
+      <mat-panel-title> {{ exercise.basic_entities.name }} x {{ exercise.number_of_repetitions }}</mat-panel-title>
   </mat-expansion-panel-header>
 
     <div class="goal-types">

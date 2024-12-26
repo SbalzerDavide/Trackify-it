@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { EXERCISES } from './exercises.model';
 import { SupabaseService } from '../shared/supabase/supabase.service';
-import { BASIC_ACTIVITY_EXERCISE } from './basic-activity.model';
+import { BASIC_ENTITIES } from './basic-activity.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class ExercisesService {
     const { data } = await this.supabaseService.supabase
       .from(EXERCISES)
       .select(`number_of_repetitions, id, name,
-        ${BASIC_ACTIVITY_EXERCISE}( name, cal)`)
+        ${BASIC_ENTITIES}( name, unit)`)
       
     if(data){
       this.userExercises.set(data)

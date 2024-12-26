@@ -4,7 +4,7 @@ export interface Goal {
   id: string,
   exercise_id: string, 
   exercises: {
-    basic_activity_exercise: {
+    basic_entities: {
       name: string
     },
     number_of_repetitions: number

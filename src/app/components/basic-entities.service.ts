@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SupabaseService } from '../shared/supabase/supabase.service';
-import { BASIC_ACTIVITY_EXERCISE, BasicActivity } from './basic-activity.model';
+import { BASIC_ENTITIES, BasicActivity } from './basic-activity.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BasicActivityExerciseService {
+export class BasicEntitiesService {
   
   private userBasicActivities = signal<BasicActivity[]>([]);
   loadedBasicActivities = this.userBasicActivities.asReadonly();
@@ -17,8 +17,8 @@ export class BasicActivityExerciseService {
   // SELECT
   async fetchBasicActivities(){   
     const { data } = await this.supabaseService.supabase
-      .from(BASIC_ACTIVITY_EXERCISE)
-      .select(`id, name, description, cal`)
+      .from(BASIC_ENTITIES)
+      .select(`id, name, description, unit`)
     if(data){
       this.userBasicActivities.set(data)
     }
@@ -27,7 +27,7 @@ export class BasicActivityExerciseService {
   // INSERT
   async addBasicActivity(activity: {}){
     const { error } = await this.supabaseService.supabase
-      .from(BASIC_ACTIVITY_EXERCISE)
+      .from(BASIC_ENTITIES)
       .insert(activity)
 
     if (error) {
@@ -38,7 +38,7 @@ export class BasicActivityExerciseService {
   // UPDATE
   async updateBasicActivity(newVal: {}, id: string){
     const { error } = await this.supabaseService.supabase
-      .from(BASIC_ACTIVITY_EXERCISE)
+      .from(BASIC_ENTITIES)
       .update(newVal)
       .eq('id', id)
 
@@ -51,7 +51,7 @@ export class BasicActivityExerciseService {
   async deleteBasicActivity(id: string){
     try{
       await this.supabaseService.supabase
-        .from(BASIC_ACTIVITY_EXERCISE)
+        .from(BASIC_ENTITIES)
         .delete()
         .eq('id', id)      
     } catch(error){

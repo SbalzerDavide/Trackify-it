@@ -1,8 +1,8 @@
 export interface Exercises {
   number_of_repetitions: number,
-  basic_activity_exercise: {
+  basic_entities: {
     name: string,
-    cal: number
+    unit: number
   }
 }
 

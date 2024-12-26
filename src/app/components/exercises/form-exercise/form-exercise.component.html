@@ -5,7 +5,7 @@
   <form class="exercise-form" [formGroup]="insertExerciseForm">
       <mat-form-field class="full-width">
         <mat-label>basic activity</mat-label>
-        <mat-select formControlName="basicExercise">
+        <mat-select formControlName="basicEntity">
           @for (basicActivity of basicActivities(); track $index) {
             <mat-option [value]="basicActivity.value">{{ basicActivity.label }}</mat-option>
           }
