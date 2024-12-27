@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 
 import { SupabaseService } from '../shared/supabase/supabase.service';
 import { ACTIVITIES } from './activity.model';
-import { EXERCISES } from './exercises.model';
+import { ENTITIES } from './entities.model';
 import { BASIC_ENTITIES } from './basic-activity.model';
 import { Subject } from 'rxjs';
 
@@ -26,19 +26,19 @@ export class ActivityService {
 
   // SELECT
   async fetchFilteredActivities(
-    exerciseId: string,
+    entityId: string,
     startDate: Date,
     endDate: Date
   ) {
     const { data } = await this.supabaseService.supabase
       .from(ACTIVITIES)
       .select(
-        `date, id, quantity, exercise_id,
-        ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`
+        `date, id, quantity, entity_id,
+        ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
-      .eq('exercise_id', exerciseId)
+      .eq('entity_id', entityId)
       .order('date', { ascending: true });
     if (data) {
       return data;
@@ -52,8 +52,8 @@ export class ActivityService {
     const { data } = await this.supabaseService.supabase
       .from(ACTIVITIES)
       .select(
-        `date, id, quantity, exercise_id,
-        ${EXERCISES}( number_of_repetitions, name, ${BASIC_ENTITIES}( name, unit))`
+        `date, id, quantity, entity_id,
+        ${ENTITIES}( number_of_repetitions, name, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
@@ -74,8 +74,8 @@ export class ActivityService {
 
     const { error } = await this.supabaseService.supabase
       .from(ACTIVITIES)
-      .insert(activity).select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
+      .insert(activity).select(`date, id, quantity, entity_id,
+      ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
     if (error) {
       console.error(error.message);
     }
@@ -86,8 +86,8 @@ export class ActivityService {
     const { data, error } = await this.supabaseService.supabase
       .from(ACTIVITIES)
       .update(newVal)
-      .eq('id', id).select(`date, id, quantity, exercise_id,
-      ${EXERCISES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
+      .eq('id', id).select(`date, id, quantity, entity_id,
+      ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
 
     if (data) {
       // update local data
@@ -131,7 +131,7 @@ export class ActivityService {
     let groupingList: any[] = [];
     data.forEach((el) => {
       const check = groupingList.findIndex(
-        (element) => element.exercise_id === el.exercise_id
+        (element) => element.entity_id === el.entity_id
       );
 
       if (check >= 0) {

@@ -9,7 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog } from '@angular/material/dialog';
 
 import { RangeBarComponent } from '../../shared/lib/range-bar/range-bar.component';
-import { ExercisesService } from '../../components/exercises.service';
+import { EntitiesService } from '../../components/entities.service';
 import { ChartComponent } from "../../shared/lib/chart/chart.component";
 import { ChartFormattedData } from '../../components/chart.model';
 import { ActivityService } from '../../components/activity.service';
@@ -34,7 +34,7 @@ export class ChartsPageComponent implements OnInit {
 
   rangeType = signal<'daily' | 'weekly' | 'monthly' | 'annual'>('weekly')
   chartTypes = signal<string[]>(['bar', 'line'])
-  exerciseId = signal<number | undefined>(undefined)
+  entityId = signal<number | undefined>(undefined)
   dataChart = signal<ChartFormattedData | null>(null)
   activeGoal = signal<any>({})
   startRange = signal<Date>(new Date(new Date().setDate(new Date().getDate() - 6)))
@@ -45,7 +45,7 @@ export class ChartsPageComponent implements OnInit {
 
   goalStore = inject(GoalStore)
 
-  exerciseService = inject(ExercisesService)
+  entitiesService = inject(EntitiesService)
   activityService = inject(ActivityService)
   formatDataChart = inject(FormatDataChartService)
   chartService = inject(ChartService)
@@ -53,20 +53,20 @@ export class ChartsPageComponent implements OnInit {
   constructor( private router: Router, private route: ActivatedRoute) { }
 
   async ngOnInit() {    
-    await this.exerciseService.fetchExercises()
+    await this.entitiesService.fetchEntities()
     await this.goalStore.loadAll()
 
     const subscriptionUpdateActivities = this.activityService.updateActivities.subscribe(val => {
       this.setDataForChart()
     })
 
-    const subscriptionsForm = this.activeExerciseForm.valueChanges.subscribe({
+    const subscriptionsForm = this.activeEntityForm.valueChanges.subscribe({
       next: (val)=>{       
          if(!this.disableFormChangeNatigation()){
            this.router.navigate([], {
              relativeTo: this.route,
              queryParams: {
-               "exercise-id": val.activeExercise,
+               "entity-id": val.activeEntity,
                "is-range-absolute": val.isRangeAbsolute
              },
              queryParamsHandling: 'merge'
@@ -81,13 +81,13 @@ export class ChartsPageComponent implements OnInit {
       .subscribe({
         next: params =>{     
           let changeIsAbsolute: boolean
-          if(params?.['exercise-id'] === this.isRangeAbsolute()){
+          if(params?.['entity-id'] === this.isRangeAbsolute()){
             changeIsAbsolute = false
           } else{
             changeIsAbsolute = true
           }
   
-          this.exerciseId.set(+params?.['exercise-id'])    
+          this.entityId.set(+params?.['entity-id'])    
 
           if(params?.['is-range-absolute']){
             switch(params?.['is-range-absolute']){
@@ -103,11 +103,11 @@ export class ChartsPageComponent implements OnInit {
             }
           } 
 
-          if(this.exerciseId()){   
+          if(this.entityId()){   
             this.disableFormChangeNatigation.set(true)                   
-            this.activeExerciseForm.controls.isRangeAbsolute.setValue(this.isRangeAbsolute())
+            this.activeEntityForm.controls.isRangeAbsolute.setValue(this.isRangeAbsolute())
             this.disableFormChangeNatigation.set(true)      
-            this.activeExerciseForm.controls.activeExercise.setValue(this.exerciseId()!)
+            this.activeEntityForm.controls.activeEntity.setValue(this.entityId()!)
           }
 
           
@@ -128,7 +128,7 @@ export class ChartsPageComponent implements OnInit {
             this.endRange.set(range.endRange)
           }
       
-          if(this.exerciseId()){
+          if(this.entityId()){
             this.setDataForChart()
           }
         }
@@ -141,16 +141,16 @@ export class ChartsPageComponent implements OnInit {
     })
   }
 
-  activeExerciseForm = new FormGroup({
-    activeExercise: new FormControl(0, {
+  activeEntityForm = new FormGroup({
+    activeEntity: new FormControl(0, {
       validators: [ Validators.required]
     }),
     isRangeAbsolute: new FormControl(false),
     // chartType: new FormControl<'line' | 'bar'>('bar')
   })
 
-  exercises = computed(()=>{    
-    return this.exerciseService.loadedExercises().map((el)=>{
+  entities = computed(()=>{    
+    return this.entitiesService.loadedEntities().map((el)=>{
       return {
         value: el.id,
         label: el.basic_entities?.name ?? el.name
@@ -197,17 +197,17 @@ export class ChartsPageComponent implements OnInit {
     if(range.endRange){
       this.endRange.set(range.endRange)
     }
-    if(this.exerciseId()){
+    if(this.entityId()){
       this.setDataForChart()
     }
   }
 
   private async setDataForChart(){    
-    const data = await this.activityService.fetchFilteredActivities(this.exerciseId()!.toString(), this.startRange(), this.endRange())
+    const data = await this.activityService.fetchFilteredActivities(this.entityId()!.toString(), this.startRange(), this.endRange())
     this.data.set(data)
 
     const activeGoal = this.goalStore.goals().filter(goal => goal.range === this.rangeGoalForChart())
-      .find(goal => +goal.exercise_id === this.exerciseId())
+      .find(goal => +goal.entity_id === this.entityId())
 
     this.activeGoal.set(activeGoal)    
     
@@ -223,7 +223,7 @@ export class ChartsPageComponent implements OnInit {
   openDialog() {
     this.dialog.open(FormSaveChartComponent, {
       data: {
-        activeExercise: this.exerciseId(),
+        activeEntity: this.entityId(),
         isRangeAbsolute: this.isRangeAbsolute(),
         rangeType: this.rangeType()
       },

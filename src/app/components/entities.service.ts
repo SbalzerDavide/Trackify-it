@@ -1,35 +1,35 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { EXERCISES } from './exercises.model';
+import { ENTITIES } from './entities.model';
 import { SupabaseService } from '../shared/supabase/supabase.service';
 import { BASIC_ENTITIES } from './basic-activity.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExercisesService {
-  private userExercises = signal<any[]>([])
-  loadedExercises = this.userExercises.asReadonly()
+export class EntitiesService {
+  private userEntities = signal<any[]>([])
+  loadedEntities = this.userEntities.asReadonly()
 
   supabaseService = inject(SupabaseService)
 
   constructor() { }
 
   // SELECT
-  async fetchExercises(){   
+  async fetchEntities(){   
     const { data } = await this.supabaseService.supabase
-      .from(EXERCISES)
+      .from(ENTITIES)
       .select(`number_of_repetitions, id, name,
         ${BASIC_ENTITIES}( name, unit)`)
       
     if(data){
-      this.userExercises.set(data)
+      this.userEntities.set(data)
     }
   }
 
   // INSERT
-  async addExercises(activity:{}){        
+  async addEntity(activity:{}){        
     const { error } = await this.supabaseService.supabase
-      .from(EXERCISES)
+      .from(ENTITIES)
       .insert(activity)
 
     if (error) {
@@ -38,9 +38,9 @@ export class ExercisesService {
   }
 
   // UPDATE
-  async updateExercises(newVal: {}, id: string){
+  async updateEntity(newVal: {}, id: string){
     const { error } = await this.supabaseService.supabase
-      .from(EXERCISES)
+      .from(ENTITIES)
       .update(newVal)
       .eq('id', id)
 
@@ -50,10 +50,10 @@ export class ExercisesService {
   }
 
   // DELETE
-  async deleteExercises(id: string){
+  async deleteEntity(id: string){
     try{
       await this.supabaseService.supabase
-        .from(EXERCISES)
+        .from(ENTITIES)
         .delete()
         .eq('id', id)      
     } catch(error){

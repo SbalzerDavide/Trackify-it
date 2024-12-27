@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
 
     this.dialog.open(FormSaveChartComponent, {
       data: {
-        activeExercise: chart.exercise_id,
+        activeEntity: chart.entity_id,
         name: chart.name,
         isRangeAbsolute: chart.is_range_absolute,
         rangeType: chart.range_type,
@@ -106,7 +106,7 @@ export class DashboardComponent implements OnInit {
     
     this.router.navigate(['/personal', 'charts'], {
       queryParams: {
-        'exercise-id': chart.exercise_id,
+        'entity-id': chart.entity_id,
         'is-range-absolute': chart.is_range_absolute,
         'range-type': chart.range_type
       },
@@ -144,7 +144,7 @@ export class DashboardComponent implements OnInit {
   async onUpdateQuantity(e: number, index: number) {
     const realElementToUpdate = this.data().find(
       (el) =>
-        el.exercise_id === this.loadedActivities()[index].exercise_id &&
+        el.entity_id === this.loadedActivities()[index].entity_id &&
         el.date === this.loadedActivities()[index].date
     );
 
@@ -177,7 +177,7 @@ export class DashboardComponent implements OnInit {
         );
 
         const data = await this.activityService.fetchFilteredActivities(
-          chart.exercise_id,
+          chart.entity_id,
           range.startRange!,
           range.endRange!
         );
@@ -186,7 +186,7 @@ export class DashboardComponent implements OnInit {
         const activeGoal = this.goalStore
           .goals()
           .filter((goal) => goal.range === rangeGoalForChart)
-          .find((goal) => goal.exercise_id === chart.exercise_id);
+          .find((goal) => goal.entity_id === chart.entity_id);
 
         const dataChart = this.formatDataChart.formatData(
           data,

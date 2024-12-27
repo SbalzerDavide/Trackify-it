@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add exercise</h2>
+<h2 mat-dialog-title>Add entity</h2>
 <mat-dialog-content class="mat-typography">
 
   <form class="basic-form" [formGroup]="insertActivityForm">
@@ -12,10 +12,10 @@
     </mat-form-field>
 
     <mat-form-field class="full-width">
-      <mat-label>Exercise</mat-label>
-        <mat-select formControlName="exercise">
-          @for (exercise of exercises(); track $index) {
-            <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
+      <mat-label>Entity</mat-label>
+        <mat-select formControlName="entity">
+          @for (entity of entities(); track $index) {
+            <mat-option [value]="entity.value">{{ entity.label }}</mat-option>
           }
         </mat-select>
     </mat-form-field>

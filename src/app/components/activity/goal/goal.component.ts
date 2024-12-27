@@ -8,7 +8,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 import { GoalStore } from '../../goal.store';
 import { GoalService } from '../../goal.service';
-import { ExercisesService } from '../../exercises.service';
+import { EntitiesService } from '../../entities.service';
 
 @Component({
   selector: 'app-goal',
@@ -23,26 +23,26 @@ export class GoalComponent implements OnInit{
   goalStore = inject(GoalStore)
   goalService = inject(GoalService)
 
-  exerciseService = inject(ExercisesService)
+  entitiesService = inject(EntitiesService)
 
   goalTypes = [ 'daily', 'weekly', 'monthly', 'annual'] 
 
   async ngOnInit() {
-    await this.exerciseService.fetchExercises()
+    await this.entitiesService.fetchEntities()
     await this.goalStore.loadAll()
   }
 
-  async addGoal(range: string, exerciseId: string){
+  async addGoal(range: string, entityId: string){
     const newVal = {
       range,
-      exerciseId
+      entityId
     }
     await this.goalService.addGoal(newVal)
     await this.goalStore.loadAll()
   }
 
-  async updateGoal(goalType: string, exerciseId: string, operation: number){
-    const goal = this.getValue(goalType, exerciseId)
+  async updateGoal(goalType: string, entityId: string, operation: number){
+    const goal = this.getValue(goalType, entityId)
     if(goal){
       const newVal = {
         quantity: operation === 1 ? goal.quantity + 1 : goal.quantity - 1,
@@ -57,8 +57,8 @@ export class GoalComponent implements OnInit{
     return this.goalStore.goals().find(el => el.id === id)
   }
 
-  getValue(goalType: string, exerciseId: string){
-    return this.goalStore.goals().find(el => el.range === goalType && el.exercise_id === exerciseId)
+  getValue(goalType: string, entityId: string){
+    return this.goalStore.goals().find(el => el.range === goalType && el.entity_id === entityId)
   }
 
 }

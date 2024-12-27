@@ -323,7 +323,7 @@ export class FormatDataChartService {
     data.forEach((activity) => {
       const findIndex = dataByDay.findIndex(
         (el) =>
-          el.date === activity.date && el.exercise_id === activity.exercise_id
+          el.date === activity.date && el.entity_id === activity.entity_id
       );
       if (findIndex >= 0) {
         dataByDay[findIndex].quantity += activity.quantity;

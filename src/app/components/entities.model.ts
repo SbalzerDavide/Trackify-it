@@ -1,4 +1,4 @@
-export interface Exercises {
+export interface Entities {
   number_of_repetitions: number,
   basic_entities: {
     name: string,
@@ -6,4 +6,4 @@ export interface Exercises {
   }
 }
 
-export const EXERCISES = 'exercises'
+export const ENTITIES = 'entities'

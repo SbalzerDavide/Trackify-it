@@ -8,7 +8,7 @@ import { PersonalAreaComponent } from './pages/personal-area/personal-area.compo
 import { NotFoundComponentComponent } from './pages/not-found-component/not-found-component.component';
 import { isLoggedinMatch } from './shared/auth/auth.service';
 import { BasicEntitiesComponent } from './pages/basic-entities/basic-entities.component';
-import { ExercisesPageComponent } from './pages/exercises-page/exercises-page.component';
+import { EntitiesPageComponent } from './pages/entities-page/entities-page.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { GoalPageComponent } from './pages/goal-page/goal-page.component';
 import { ChartsPageComponent } from './pages/charts-page/charts-page.component';
@@ -47,8 +47,8 @@ export const routes: Routes = [
         loadComponent: () => BasicEntitiesComponent
       },
       {
-        path: 'exercise',
-        loadComponent: () => ExercisesPageComponent
+        path: 'entities',
+        loadComponent: () => EntitiesPageComponent
       },
       {
         path: 'activity',

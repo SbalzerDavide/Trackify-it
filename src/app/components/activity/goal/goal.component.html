@@ -1,8 +1,8 @@
 <mat-accordion class="example-headers-align"></mat-accordion>
-@for (exercise of exerciseService.loadedExercises(); track $index) {
+@for (entity of entitiesService.loadedEntities(); track $index) {
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
-      <mat-panel-title> {{ exercise.basic_entities.name }} x {{ exercise.number_of_repetitions }}</mat-panel-title>
+      <mat-panel-title> {{ entity.basic_entities.name }} x {{ entity.number_of_repetitions }}</mat-panel-title>
   </mat-expansion-panel-header>
 
     <div class="goal-types">
@@ -10,12 +10,12 @@
         <div class="goal-type">
           <div class="type">{{ goalType }}</div>
           <div class="value">
-          @if( getValue(goalType, exercise.id) ){
-            <button (click)="updateGoal(goalType, exercise.id, 0)" mat-mini-fab [disabled]="getValue(goalType, exercise.id)!.quantity < 2">-</button>
-            <span>{{ getValue(goalType, exercise.id)!.quantity }}</span>
-            <button (click)="updateGoal(goalType, exercise.id, 1)" mat-mini-fab>+</button>
+          @if( getValue(goalType, entity.id) ){
+            <button (click)="updateGoal(goalType, entity.id, 0)" mat-mini-fab [disabled]="getValue(goalType, entity.id)!.quantity < 2">-</button>
+            <span>{{ getValue(goalType, entity.id)!.quantity }}</span>
+            <button (click)="updateGoal(goalType, entity.id, 1)" mat-mini-fab>+</button>
           } @else {
-            <button (click)="addGoal(goalType, exercise.id)" mat-flat-button>ADD</button>
+            <button (click)="addGoal(goalType, entity.id)" mat-flat-button>ADD</button>
           }
           </div>
         </div>

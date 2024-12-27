@@ -26,7 +26,7 @@ import { CardComponent } from '../../shared/lib/card/card.component';
 import { GoalStore } from '../goal.store';
 import { ChartComponent } from '../../shared/lib/chart/chart.component';
 import { FormatDataChartService } from '../format-data-chart.service';
-import { ExercisesService } from '../exercises.service';
+import { EntitiesService } from '../entities.service';
 import { RangeBarComponent } from '../../shared/lib/range-bar/range-bar.component';
 import { ChartFormattedData } from '../chart.model';
 import { Range } from '../activity.model';
@@ -52,7 +52,7 @@ export class ActivityComponent implements OnInit {
 
   activityService = inject(ActivityService);
   formatDataChart = inject(FormatDataChartService);
-  exerciseService = inject(ExercisesService);
+  entitiesService = inject(EntitiesService);
 
   goalStore = inject(GoalStore);
 
@@ -65,15 +65,15 @@ export class ActivityComponent implements OnInit {
   isRangeAbsolute = signal<boolean>(false);
   data = signal<any[]>([]);
 
-  activeExerciseForm = new FormGroup({
-    activeExercise: new FormControl('', {
+  activeEntityForm = new FormGroup({
+    activeEntity: new FormControl('', {
       validators: [Validators.required],
     }),
     isRangeAbsolute: new FormControl(false),
   });
 
-  exercises = computed(() => {
-    return this.exerciseService.loadedExercises().map((el) => {
+  entities = computed(() => {
+    return this.entitiesService.loadedEntities().map((el) => {
       return {
         value: el.id,
         label: el.name ?? el.basic_entities.name,
@@ -100,7 +100,7 @@ export class ActivityComponent implements OnInit {
 
   async ngOnInit() {
     await this.fetchData();
-    await this.exerciseService.fetchExercises();
+    await this.entitiesService.fetchEntities();
     await this.goalStore.loadAll();
     this.loading.set(false);
 
@@ -111,7 +111,7 @@ export class ActivityComponent implements OnInit {
         });
       });
 
-    const subscriptionForm = this.activeExerciseForm.valueChanges.subscribe({
+    const subscriptionForm = this.activeEntityForm.valueChanges.subscribe({
       next: (val) => {
         let changeIsAbsolute: boolean;
         if (val.isRangeAbsolute === this.isRangeAbsolute()) {
@@ -154,7 +154,7 @@ export class ActivityComponent implements OnInit {
   async onUpdateQuantity(e: number, index: number) {
     const realElementToUpdate = this.data().find(
       (el) =>
-        el.exercise_id === this.loadedActivities()[index].exercise_id &&
+        el.entity_id === this.loadedActivities()[index].entity_id &&
         el.date === this.loadedActivities()[index].date
     );
     let newVal = {
@@ -220,10 +220,10 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  getValue(goalType: string, exerciseId: string) {
+  getValue(goalType: string, entityId: string) {
     return this.goalStore
       .goals()
-      .find((el) => el.range === goalType && el.exercise_id === exerciseId);
+      .find((el) => el.range === goalType && el.entity_id === entityId);
   }
 
   private async fetchData() {
@@ -240,25 +240,25 @@ export class ActivityComponent implements OnInit {
       .filter((goal) => goal.range === this.rangeGoalForChart())
       .find(
         (goal) =>
-          goal.exercise_id === this.activeExerciseForm.value.activeExercise
+          goal.entity_id === this.activeEntityForm.value.activeEntity
       );
 
     this.activeGoal.set(activeGoal);
     await this.fetchData();
 
-    if (this.activeExerciseForm.value.activeExercise) {
+    if (this.activeEntityForm.value.activeEntity) {
       this.formatDataForChart();
     }
   }
 
   private formatDataForChart() {
-    const filteredFromExercise = this.data().filter(
-      (el) => el.exercise_id === this.activeExerciseForm.value.activeExercise!
+    const filteredFromEntity = this.data().filter(
+      (el) => el.entity_id === this.activeEntityForm.value.activeEntity!
     );
 
     this.dataChart.set(
       this.formatDataChart.formatData(
-        filteredFromExercise,
+        filteredFromEntity,
         this.rangeType(),
         this.startRange(),
         this.endRange(),

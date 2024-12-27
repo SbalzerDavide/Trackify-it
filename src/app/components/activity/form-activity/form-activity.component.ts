@@ -9,9 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ExercisesService } from '../../exercises.service';
+import { EntitiesService } from '../../entities.service';
 import { ActivityService } from '../../activity.service';
-import { FormBasicActivityComponent } from '../../basic-activity-exercise/form-basic-activity/form-basic-activity.component';
+import { FormBasicActivityComponent } from '../../basic-activity-entity/form-basic-activity/form-basic-activity.component';
 
 
 @Component({
@@ -24,17 +24,17 @@ import { FormBasicActivityComponent } from '../../basic-activity-exercise/form-b
 })
 export class FormActivityComponent implements OnInit{
 
-  exerciseService = inject(ExercisesService)
+  entitiesService = inject(EntitiesService)
   activityService = inject(ActivityService)
 
   constructor(public dialogRef: MatDialogRef<FormBasicActivityComponent>){}
 
   async ngOnInit() {
-    await this.exerciseService.fetchExercises()
+    await this.entitiesService.fetchEntities()
   }
 
-  exercises = computed(()=>{    
-    return this.exerciseService.loadedExercises().map((el)=>{
+  entities = computed(()=>{    
+    return this.entitiesService.loadedEntities().map((el)=>{
       return {
         value: el.id,
         label: el.basic_entities?.name ?? el.name
@@ -48,7 +48,7 @@ export class FormActivityComponent implements OnInit{
 
   insertActivityForm = new FormGroup({
     day: new FormControl(new Date()),
-    exercise: new FormControl('', {
+    entity: new FormControl('', {
       validators: [ Validators.required]
     }),
     quantity: new FormControl('1', {
@@ -61,7 +61,7 @@ export class FormActivityComponent implements OnInit{
       if(this.insertActivityForm.valid){
         const activity = {
           date: this.insertActivityForm.value.day,
-          exercise_id: this.insertActivityForm.value.exercise,
+          entity_id: this.insertActivityForm.value.entity,
           quantity: this.insertActivityForm.value.quantity
         }
         await this.activityService.addActivity(activity)

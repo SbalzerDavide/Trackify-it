@@ -1,0 +1,12 @@
+<div class="cards-container">
+  @for (entity of entitiesService.loadedEntities(); track $index) {
+    <app-card       
+    [title]="entity.number_of_repetitions" 
+    [description]="entity.basic_entities?.name ?? entity.name"/>  
+  }
+</div>
+
+<div class="action">
+  <button mat-button (click)="openDialog()">Add new</button>
+</div>
+

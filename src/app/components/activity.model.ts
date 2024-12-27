@@ -1,7 +1,7 @@
 // export interface Activity {
 //   date: string, 
 //   exercises_id: string,
-//   exercises: {},
+//   entities: {},
 //   id: string,
 //   quantity: number
 // }

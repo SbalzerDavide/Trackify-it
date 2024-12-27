@@ -2,8 +2,8 @@ export interface Goal {
   quantity: number,
   range: string,
   id: string,
-  exercise_id: string, 
-  exercises: {
+  entity_id: string, 
+  entities: {
     basic_entities: {
       name: string
     },

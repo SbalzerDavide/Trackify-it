@@ -10,7 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ChartService } from '../../../shared/lib/chart.service';
 import { ChartInfo } from '../../../shared/lib/chart.model';
-import { ExercisesService } from '../../exercises.service';
+import { EntitiesService } from '../../entities.service';
 
 
 
@@ -26,14 +26,14 @@ export class FormSaveChartComponent implements OnInit{
   data = inject(MAT_DIALOG_DATA);
 
   chartService = inject(ChartService)
-  exerciseService = inject(ExercisesService)
+  entitiesService = inject(EntitiesService)
 
   rangeTypes = signal<string[]>(['weekly', 'monthly', 'annual'])
 
   constructor(public dialogRef: MatDialogRef<FormSaveChartComponent>){}
 
-  exercises = computed(()=>{    
-    return this.exerciseService.loadedExercises().map((el)=>{
+  entities = computed(()=>{    
+    return this.entitiesService.loadedEntities().map((el)=>{
       return {
         value: el.id,
         label: el.basic_entities?.name ?? el.name
@@ -42,7 +42,7 @@ export class FormSaveChartComponent implements OnInit{
   })
 
   async ngOnInit() {
-    await this.exerciseService.fetchExercises()
+    await this.entitiesService.fetchEntities()
   }
 
 
@@ -50,7 +50,7 @@ export class FormSaveChartComponent implements OnInit{
     name: new FormControl(this.data.name, {
       validators: [Validators.required]
     }),
-    exercise: new FormControl(this.data.activeExercise, {
+    entity: new FormControl(this.data.activeEntity, {
       validators: [Validators.required]
     }),
     rangeType: new FormControl(this.data.rangeType, {
@@ -70,7 +70,7 @@ export class FormSaveChartComponent implements OnInit{
       if(this.saveChartForm.valid){
         let chartInfo: ChartInfo = {
           name: this.saveChartForm.value.name!,
-          exercise_id: this.saveChartForm.value.exercise,
+          entity_id: this.saveChartForm.value.entity,
           is_range_absolute: this.saveChartForm.value.isRangeAbsolute,
           range_type: this.saveChartForm.value.rangeType,
           show_in_dashboard: this.saveChartForm.value.showIndashboard!

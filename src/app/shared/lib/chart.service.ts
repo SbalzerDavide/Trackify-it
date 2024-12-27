@@ -20,7 +20,7 @@ export class ChartService {
   async getDashboadCharts(){
     const { data } = await this.supabaseService.supabase
       .from(CHART)
-      .select('id, name, exercise_id, is_range_absolute, range_type, show_in_dashboard')
+      .select('id, name, entity_id, is_range_absolute, range_type, show_in_dashboard')
       .eq('show_in_dashboard', true)
       .order('created_at', { ascending: false })
     if(data){

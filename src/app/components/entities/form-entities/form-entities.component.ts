@@ -9,19 +9,19 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button';
 
 
-import { ExercisesService } from '../../exercises.service';
+import { EntitiesService } from '../../entities.service';
 import { BasicEntitiesService } from '../../basic-entities.service';
-import { FormBasicActivityComponent } from '../../basic-activity-exercise/form-basic-activity/form-basic-activity.component';
+import { FormBasicActivityComponent } from '../../basic-activity-entity/form-basic-activity/form-basic-activity.component';
 
 @Component({
-  selector: 'app-form-exercise',
+  selector: 'app-form-entities',
   standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatDialogModule, MatInputModule, MatSelectModule, MatButtonModule],
-  templateUrl: './form-exercise.component.html',
-  styleUrl: './form-exercise.component.css'
+  templateUrl: './form-entities.component.html',
+  styleUrl: './form-entities.component.css'
 })
-export class FormExerciseComponent implements OnInit{
-  exerciseService = inject(ExercisesService)
+export class FormEntitiesComponent implements OnInit{
+  entitiesService = inject(EntitiesService)
   basicEntitiesService = inject(BasicEntitiesService)
 
   constructor(public dialogRef: MatDialogRef<FormBasicActivityComponent>) { }
@@ -43,7 +43,7 @@ export class FormExerciseComponent implements OnInit{
     })
   })
 
-  insertExerciseForm = new FormGroup({
+  insertEntityForm = new FormGroup({
     basicEntity: new FormControl(''),
     name: new FormControl(''),
     repetitions: new FormControl('', {
@@ -51,24 +51,24 @@ export class FormExerciseComponent implements OnInit{
     }),
   }, { validators: this.oneFieldOnlyValidator('basicEntity', 'name') })
 
-  async insertExercise(){
-    if(this.insertExerciseForm.valid){
+  async insertEntity(){
+    if(this.insertEntityForm.valid){
       try{      
-        if(this.insertExerciseForm.valid){
-          const newExercise: {
+        if(this.insertEntityForm.valid){
+          const newEntity: {
             number_of_repetitions: string;
             name?: string;
-            basic_exercise_id?: string;
+            basic_entity_id?: string;
           } = {
-            number_of_repetitions: this.insertExerciseForm.value.repetitions!,
+            number_of_repetitions: this.insertEntityForm.value.repetitions!,
           }
-          if(this.insertExerciseForm.value.basicEntity){
-            newExercise.basic_exercise_id = this.insertExerciseForm.value.basicEntity
-          } else if(this.insertExerciseForm.value.name){
-            newExercise.name = this.insertExerciseForm.value.name
+          if(this.insertEntityForm.value.basicEntity){
+            newEntity.basic_entity_id = this.insertEntityForm.value.basicEntity
+          } else if(this.insertEntityForm.value.name){
+            newEntity.name = this.insertEntityForm.value.name
           }
-          await this.exerciseService.addExercises(newExercise)
-          this.exerciseService.fetchExercises()
+          await this.entitiesService.addEntity(newEntity)
+          this.entitiesService.fetchEntities()
           this.closeDialog()        
         }
       } catch(error){

@@ -8,7 +8,7 @@
   [startRange]="startRange()"
   [endRange]="endRange()"/>
 
-<form [formGroup]="activeExerciseForm">
+<form [formGroup]="activeEntityForm">
   <div class="toggle-range">
     <mat-slide-toggle
       formControlName="isRangeAbsolute">
@@ -17,10 +17,10 @@
   </div>
 
   <mat-form-field class="full-width">
-    <mat-label>Exercise</mat-label>
-      <mat-select formControlName="activeExercise">
-        @for (exercise of exercises(); track $index) {
-          <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
+    <mat-label>Entities</mat-label>
+      <mat-select formControlName="activeEntity">
+        @for (entity of entities(); track $index) {
+          <mat-option [value]="entity.value">{{ entity.label }}</mat-option>
         }
       </mat-select>
   </mat-form-field>
@@ -44,7 +44,7 @@
   [data]="dataChart()?.data"
   [goal]="activeGoal()?.quantity" 
   />
-  <!-- [type]="activeExerciseForm.value.chartType!" -->
+  <!-- [type]="activeEntityForm.value.chartType!" -->
 
 <div class="save">
   <button mat-flat-button (click)="openDialog()">Save</button>

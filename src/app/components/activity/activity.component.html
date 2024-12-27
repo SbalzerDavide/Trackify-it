@@ -16,8 +16,8 @@
     <div class="cards-container">
       @for (activity of loadedActivities(); track $index) {
         <app-card       
-        [title]="setCardTitle(activity.exercises)" 
-        [goal]="getValue(rangeType(), activity.exercise_id)"
+        [title]="setCardTitle(activity.entities)" 
+        [goal]="getValue(rangeType(), activity.entity_id)"
         [quantity]="+activity.quantity"
         [editQuantity]="rangeType() === 'daily'"
         (updateQuantity)="onUpdateQuantity($event, $index)"/>  
@@ -29,7 +29,7 @@
 }  
 @if (rangeType() !== 'daily') {
   <div class="activity-chart">
-    <form [formGroup]="activeExerciseForm">
+    <form [formGroup]="activeEntityForm">
       <div class="toggle-range">
         <mat-slide-toggle
           formControlName="isRangeAbsolute">
@@ -38,10 +38,10 @@
       </div>
     
       <mat-form-field class="full-width">
-        <mat-label>Exercise</mat-label>
-          <mat-select formControlName="activeExercise">
-            @for (exercise of exercises(); track $index) {
-              <mat-option [value]="exercise.value">{{ exercise.label }}</mat-option>
+        <mat-label>Entity</mat-label>
+          <mat-select formControlName="activeEntity">
+            @for (entity of entities(); track $index) {
+              <mat-option [value]="entity.value">{{ entity.label }}</mat-option>
             }
           </mat-select>
       </mat-form-field>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BasicEntities } from "../../components/basic-activity-exercise/basic-entities.component";
+import { BasicEntities } from "../../components/basic-activity-entity/basic-entities.component";
 
 @Component({
   selector: 'app-basic-entities-page',
