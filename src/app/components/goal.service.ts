@@ -20,7 +20,7 @@ export class GoalService {
       const { data } = await this.supabaseService.supabase
         .from(GOAL)
         .select(`quantity, range, id, entity_id,
-        ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name ))`)
+        ${ENTITIES}( unit_value, ${BASIC_ENTITIES}( name ))`)
         .returns<Goal[]>()
       
       if(data){

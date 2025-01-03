@@ -7,7 +7,7 @@ export interface Goal {
     basic_entities: {
       name: string
     },
-    number_of_repetitions: number
+    unit_value: number
   } 
 }
 

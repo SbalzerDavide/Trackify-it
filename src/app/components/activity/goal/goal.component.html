@@ -2,7 +2,7 @@
 @for (entity of entitiesService.loadedEntities(); track $index) {
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
-      <mat-panel-title> {{ entity.basic_entities.name }} x {{ entity.number_of_repetitions }}</mat-panel-title>
+      <mat-panel-title> {{ entity.basic_entities.name }} x {{ entity.unit_value }}</mat-panel-title>
   </mat-expansion-panel-header>
 
     <div class="goal-types">

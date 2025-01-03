@@ -1,5 +1,5 @@
 export interface Entities {
-  number_of_repetitions: number,
+  unit_value: number,
   basic_entities: {
     name: string,
     unit: number

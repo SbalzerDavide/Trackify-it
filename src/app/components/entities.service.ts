@@ -18,7 +18,7 @@ export class EntitiesService {
   async fetchEntities(){   
     const { data } = await this.supabaseService.supabase
       .from(ENTITIES)
-      .select(`number_of_repetitions, id, name,
+      .select(`unit_value, id, name,
         ${BASIC_ENTITIES}( name, unit)`)
       
     if(data){

@@ -206,7 +206,7 @@ export class ActivityComponent implements OnInit {
 
   setCardTitle(basicEntity: {
     name: string;
-    number_of_repetitions: string;
+    unit_value: string;
     basic_entities: {
       unit: string;
       name: string;
@@ -216,7 +216,7 @@ export class ActivityComponent implements OnInit {
     if(basicEntity.name){
       return basicEntity.name
     } else{
-      return `${basicEntity.number_of_repetitions} x ${basicEntity.basic_entities.name}`;
+      return `${basicEntity.unit_value} x ${basicEntity.basic_entities.name}`;
     }
   }
 

@@ -46,7 +46,7 @@ export class FormEntitiesComponent implements OnInit{
   insertEntityForm = new FormGroup({
     basicEntity: new FormControl(''),
     name: new FormControl(''),
-    repetitions: new FormControl('', {
+    unitValue: new FormControl('', {
       validators: [Validators.required, Validators.min(1)]
     }),
   }, { validators: this.oneFieldOnlyValidator('basicEntity', 'name') })
@@ -56,11 +56,11 @@ export class FormEntitiesComponent implements OnInit{
       try{      
         if(this.insertEntityForm.valid){
           const newEntity: {
-            number_of_repetitions: string;
+            unit_value: string;
             name?: string;
             basic_entity_id?: string;
           } = {
-            number_of_repetitions: this.insertEntityForm.value.repetitions!,
+            unit_value: this.insertEntityForm.value.unitValue!,
           }
           if(this.insertEntityForm.value.basicEntity){
             newEntity.basic_entity_id = this.insertEntityForm.value.basicEntity

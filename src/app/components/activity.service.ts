@@ -34,7 +34,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .select(
         `date, id, quantity, entity_id,
-        ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`
+        ${ENTITIES}( unit_value, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
@@ -53,7 +53,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .select(
         `date, id, quantity, entity_id,
-        ${ENTITIES}( number_of_repetitions, name, ${BASIC_ENTITIES}( name, unit))`
+        ${ENTITIES}( unit_value, name, ${BASIC_ENTITIES}( name, unit))`
       )
       .gte('date', this.pgFormatDate(startDate))
       .lte('date', this.pgFormatDate(endDate))
@@ -75,7 +75,7 @@ export class ActivityService {
     const { error } = await this.supabaseService.supabase
       .from(ACTIVITIES)
       .insert(activity).select(`date, id, quantity, entity_id,
-      ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
+      ${ENTITIES}( unit_value, ${BASIC_ENTITIES}( name, unit))`);
     if (error) {
       console.error(error.message);
     }
@@ -87,7 +87,7 @@ export class ActivityService {
       .from(ACTIVITIES)
       .update(newVal)
       .eq('id', id).select(`date, id, quantity, entity_id,
-      ${ENTITIES}( number_of_repetitions, ${BASIC_ENTITIES}( name, unit))`);
+      ${ENTITIES}( unit_value, ${BASIC_ENTITIES}( name, unit))`);
 
     if (data) {
       // update local data
