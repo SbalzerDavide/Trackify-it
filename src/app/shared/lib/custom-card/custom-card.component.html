@@ -7,7 +7,7 @@
       <mat-card-title>
         <span>{{ title() }}</span>
         @if (settings() === true) {
-          <mat-icon (click)="openSettings.emit()">settings</mat-icon>
+          <mat-icon (click)="openSettings.emit($event)">settings</mat-icon>
         }
       </mat-card-title>
     }

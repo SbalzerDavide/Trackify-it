@@ -15,5 +15,5 @@ export class CustomCardComponent {
   subtitle = input<string | number | undefined>('')
   settings = input<boolean>(false)
 
-  openSettings = output()
+  openSettings = output<Event>()
 }

@@ -24,7 +24,7 @@
           [title]="chart.name" 
           [subtitle]="'total: ' + chart.total" 
           [settings]="true"
-          (openSettings)="onOpenSettings($index)">
+          (openSettings)="onOpenSettings($event, $index)">
           <app-chart content
             [xData]="chart.data?.xdata!"
             [data]="chart.data?.data"

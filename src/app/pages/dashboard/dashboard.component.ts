@@ -86,7 +86,8 @@ export class DashboardComponent implements OnInit {
     this.dialog.open(FormActivityComponent);
   }
 
-  onOpenSettings(chartIndex: number) {
+  onOpenSettings(event:Event , chartIndex: number) {
+    event.stopPropagation()    
     const chart = this.charts()[chartIndex];
 
     this.dialog.open(FormSaveChartComponent, {
