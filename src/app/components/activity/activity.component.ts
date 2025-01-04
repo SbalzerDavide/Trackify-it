@@ -212,7 +212,6 @@ export class ActivityComponent implements OnInit {
       name: string;
     };
   }) {
-    console.log(basicEntity);
     if(basicEntity.name){
       return basicEntity.name
     } else{

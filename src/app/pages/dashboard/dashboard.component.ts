@@ -101,9 +101,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  goToChart(chart: ChartInfo) {
-    console.log(chart);
-    
+  goToChart(chart: ChartInfo) {    
     this.router.navigate(['/personal', 'charts'], {
       queryParams: {
         'entity-id': chart.entity_id,
