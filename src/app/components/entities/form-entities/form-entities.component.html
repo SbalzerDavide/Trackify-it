@@ -1,29 +1,34 @@
 <h2 mat-dialog-title>Add new entity</h2>
 <mat-dialog-content>Select basic activity or set new name</mat-dialog-content>
 <mat-dialog-content class="mat-typography">
-
   <form class="entity-form" [formGroup]="insertEntityForm">
-      <mat-form-field class="full-width">
-        <mat-label>basic activity</mat-label>
-        <mat-select formControlName="basicEntity">
-          @for (basicActivity of basicActivities(); track $index) {
-            <mat-option [value]="basicActivity.value">{{ basicActivity.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="full-width">
+    <mat-form-field class="full-width">
+      <mat-label>basic activity</mat-label>
+      <mat-select formControlName="basicEntity">
+        <mat-option [value]="null"> - </mat-option>
+        @for (basicActivity of basicActivities(); track $index) {
+        <mat-option [value]="basicActivity.value">
+          {{ basicActivity.label }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <div [ngClass]="{ 'hidden': insertEntityForm?.value?.basicEntity }">
+      <mat-form-field
+        class="full-width">
         <mat-label>Entity name</mat-label>
-        <input type="text" matInput formControlName="name">
-      </mat-form-field>  
-      <mat-form-field class="full-width">
-        <mat-label>Unit value</mat-label>
-        <input type="number" matInput formControlName="unitValue">
-      </mat-form-field>  
+        <input type="text" matInput formControlName="name" />
+      </mat-form-field>
+    </div>
+    <mat-form-field class="full-width">
+      <mat-label>Unit value</mat-label>
+      <input type="number" matInput formControlName="unitValue" />
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="submit" (click)="insertEntity()" cdkFocusInitial>Add</button>
+  <button mat-button type="submit" (click)="insertEntity()" cdkFocusInitial>
+    Add
+  </button>
 </mat-dialog-actions>
-
-
