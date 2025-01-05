@@ -1,6 +1,6 @@
 {
-  "short_name": "healt",
-  "name": "healt",
+  "short_name": "Trackify it",
+  "name": "Trackify it",
   "description": "Analizza i dati dei tuoi allenamenti",
   "start_url": "index.html",
   "icons": [{

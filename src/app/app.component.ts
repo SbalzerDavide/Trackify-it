@@ -12,5 +12,5 @@ import { FooterComponent } from "./layout/footer/footer.component";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'healt';
+  title = 'Trackify it';
 }
