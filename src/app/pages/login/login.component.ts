@@ -102,6 +102,19 @@ export class LoginComponent implements OnInit{
     }
   }
 
+  async register(){
+    try {
+      if(this.loginForm.valid){
+        const enteredEmail = this.loginForm.value.email!
+        const enteredPassword = this.loginForm.value.password!
+        await this.authService.register(enteredEmail, enteredPassword)
+        this.router.navigate(['personal'])
+      }
+    } catch (error) {
+      console.log(error);
+    }    
+  }
+
 
   // async updateProfile(): Promise<void> {
   //   try {

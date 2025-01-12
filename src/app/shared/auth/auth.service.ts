@@ -70,6 +70,39 @@ export class AuthService {
       return { error }
     }
   }
+  
+
+  async register(email: string, password: string){
+    try{
+      const { data, error } = await this.supabase.auth.signUp({
+        email: email,
+        password: password,
+      })
+
+      return data
+
+    } catch(error){
+      console.error(error)
+      return { error }
+    }
+  }
+
+  async signOut(){
+    try{
+      const { error } = await this.supabase.auth.signOut()
+      if(error){
+        console.error(error)
+      } else{
+        window.localStorage.removeItem('access_token')
+        window.localStorage.removeItem('refresh_token')
+        this.session = null
+        this.profile.set(null)
+      }
+    } catch(error){
+      console.error(error)
+    }
+  }
+
 
   // updateProfile(profile: Profile) {
   //   const update = {
@@ -79,10 +112,6 @@ export class AuthService {
 
   //   return this.supabase.from('profiles').upsert(update)
   // }
-
-  signOut() {
-    return this.supabase.auth.signOut()
-  }
 
   async setSessionData(access_token: string, refresh_token: string){    
     try{
