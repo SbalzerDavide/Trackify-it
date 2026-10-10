@@ -1,5 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, OnInit } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Component, computed, input } from '@angular/core';
 
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
@@ -16,8 +15,6 @@ import { EChartsOption } from 'echarts';
 export class ChartComponent {
   echartsInstance: any
 
-  private destroyRef = inject(DestroyRef)
-
   type = input<'line' | 'bar'>('bar')
   xType = input<'value' | 'category' | 'time' | 'log'>('category')
   yType = input<'value' | 'category' | 'time' | 'log'>('value')
@@ -25,32 +22,10 @@ export class ChartComponent {
   data = input<any[] | undefined>([])
   goal = input<number | undefined>()
 
-  xData$ = toObservable(this.xData)
-  data$ = toObservable(this.data)
-
-  markLine = computed(()=>{
-    if(this.goal()){  
-      return {
-        label: 'goal',
-        symbol: ['none'],
-        data: [{
-          name: 'Goal',
-          yAxis: this.goal()
-        }]
-      }        
-    } else{
-      return {
-        label: 'goal',
-        symbol: ['none'],
-        data: [{
-          name: 'Goal',
-          yAxis: 0
-        }]
-      }
-    }
-  })
-
   chartOption = computed<EChartsOption>(()=> {
+    const goal = this.goal()
+    const hasGoal = goal !== undefined && goal !== null && goal > 0
+
     return {
       xAxis: {
         type: this.xType(),
@@ -62,81 +37,27 @@ export class ChartComponent {
       yAxis: {
         type: this.yType(),
         min: 'dataMin',
-        startValue: 0
+        startValue: 0,
+        max: this.getMaxValue(this.data(), goal)
       },
       series: [
         { 
           type: this.type(),
-          data: this.data()
+          data: this.data(),
+          markLine: hasGoal ? {
+            silent: true,
+            symbol: ['none', 'none'],
+            lineStyle: { type: 'dashed', width: 2 },
+            label: { show: true, position: 'insideEndTop', formatter: `Goal ${goal}` },
+            data: [{ name: 'Goal', yAxis: goal }]
+          } : undefined
         },
       ],
     }
   })
 
-
-
-  ngOnInit(): void {
-    const subscriptionXData = this.xData$.subscribe({
-      next: (value) => {        
-        if(this.echartsInstance){          
-          this.echartsInstance.setOption({
-            xAxis: {
-              type: this.xType(),
-              data: value,
-            },  
-          })
-        }
-      }
-    })
-    const subscriptionData = this.data$.subscribe({
-      next: (value) => {        
-        const max = this.getMaxValue(value, this.goal())
-        
-        if(this.echartsInstance){
-          let markLine: {}
-          if(this.goal()){  
-            markLine = {
-              label: 'goal',
-              symbol: ['none'],
-              data: [{
-                name: 'Goal',
-                yAxis: this.goal()
-              }]
-            }        
-          } else{
-            markLine = {
-              label: 'goal',
-              symbol: ['none'],
-              data: [{
-                name: 'Goal',
-                yAxis: 0
-              }]
-            }
-          }
-          
-          
-          this.echartsInstance.setOption({
-            yAxis: {
-              max: max
-            },
-            series: [
-              {
-                data: value,
-                type: 'bar',
-                markLine: markLine,
-              },
-            ]
-          })
-        }
-      }
-    })
-
-    // clean subscription
-    this.destroyRef.onDestroy(()=>{
-      subscriptionXData.unsubscribe()
-      subscriptionData.unsubscribe()
-    })
-    
+  onChartInit(ec: any){
+    this.echartsInstance = ec;
   }
 
   getMaxValue(values: any[] | undefined, goal: number | undefined){
@@ -149,7 +70,7 @@ export class ChartComponent {
     })
     let maxValue: number = 1
     if(valueClean){
-      maxValue = Math.max(...valueClean!)
+      maxValue = Math.max(1, ...valueClean)
     }
 
 
@@ -163,10 +84,6 @@ export class ChartComponent {
       }
     }                
 
-  }
-
-  onChartInit(ec: any){
-    this.echartsInstance = ec;
   }
 
 }
